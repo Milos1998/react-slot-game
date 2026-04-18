@@ -16,17 +16,22 @@ import { symbolSet } from "./components/reels/symbols/SymbolSet";
 import { GameUi } from "./components/gameUi/GameUi";
 import { AlertsPopup } from "./components/ui/AlertsPopup";
 import { WinController } from "./components/winController/WinController";
+import { createRoot } from "react-dom/client";
+import { UiRoot } from "./ui/UiRoot";
 
 const canvas = document.getElementById("pixi-canvas") as HTMLCanvasElement;
-
 const app = new Application({
     antialias: true,
     view: canvas,
     resolution: window.devicePixelRatio || 1,
     autoDensity: true,
 });
-
 sceneController.setupScene(app);
+
+const reactUi = document.getElementById("react-ui") as HTMLElement;
+const root = createRoot(reactUi);
+root.render(<UiRoot />);
+
 
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);

@@ -9,6 +9,15 @@ html {
     margin: 0;
 }
 
+body {
+    height: 100%;
+    background-color: darkslategray;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+
 #click-to-start {
     position: fixed;
     top: 0;
@@ -30,11 +39,8 @@ html {
     overflow: hidden;
 }
 
-body {
-    height: 100%;
-    background-color: darkslategray;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    align-items: center;
+#react-ui {
+    position: absolute;
+    top: 0;
+    left: 0;
 }

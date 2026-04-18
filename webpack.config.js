@@ -4,7 +4,7 @@ const CopyPlugin= require('copy-webpack-plugin')
 module.exports= (env, argv) =>{
   return {
     stats: 'minimal',
-    entry: "./src/app.ts",
+    entry: "./src/app.tsx",
     output: {
       filename: 'app.js',
       path: path.resolve(__dirname, 'docs'),
@@ -22,14 +22,14 @@ module.exports= (env, argv) =>{
     module: {
       rules:[
         {
-          test: /\.ts$/,
+          test: /\.tsx?$/,
           use: 'ts-loader',
           include:[path.resolve(__dirname, 'src')]
         }
       ]
     },
     resolve:{
-      extensions: ['.ts', '.js']
+      extensions: ['.ts', '.js', ".tsx", ".jsx"]
     }
   }
 }
