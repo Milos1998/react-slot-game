@@ -28,7 +28,7 @@ class StateMachine {
 
     private getNextFlow(prevFlowReturnVal?: any) {
         if (prevFlowReturnVal instanceof Error) {
-            systemStore.actions.setSystemError(prevFlowReturnVal);
+            systemStore.setSystemError(prevFlowReturnVal);
             this.currentState = GameFlow.ErrorFlow;
             return this.currentFlows.errorFlow;
         }
@@ -76,7 +76,7 @@ class StateMachine {
             throw new Error(`Game flow "${nextFlows}" is not registered`);
         }
 
-        gameStore.actions.setCurrentFlows(gameStore.props.nextFlows);
+        gameStore.setCurrentFlows(gameStore.props.nextFlows);
         return gameFlow;
     }
 

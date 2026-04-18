@@ -42,7 +42,7 @@ export class WinController extends BaseComponent {
                 payoutAmount: payoutDef.payouts[hitCount] * gameStore.props.currentBet(),
             };
         });
-        gameStore.actions.setSpinWins(wins.filter((win) => win.payoutAmount > 0));
+        gameStore.setSpinWins(wins.filter((win) => win.payoutAmount > 0));
     }
 
     public async playRollup(endVal: number) {

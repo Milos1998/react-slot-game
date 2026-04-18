@@ -21,7 +21,7 @@ export class BaseGameFlows extends BaseFlows {
     }
 
     public async *requestFlow() {
-        yield gameStore.actions.setSlamStopped(false);
+        yield gameStore.setSlamStopped(false);
         yield this.components.gameUi.setEnabled(true);
         yield await this.components.gameUi.awaitSpinPress();
         yield this.components.gameUi.setEnabled(false);
@@ -53,6 +53,6 @@ export class BaseGameFlows extends BaseFlows {
     public async *errorFlow() {
         yield await this.components.reelSet.stopReelSpin();
         yield await this.components.alertsPopup.displayMessage(systemStore.props.systemError);
-        yield systemStore.actions.setSystemError(null);
+        yield systemStore.setSystemError(null);
     }
 }

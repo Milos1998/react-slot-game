@@ -50,7 +50,7 @@ export class ReelSet extends BaseComponent {
 
     public setSpinResult() {
         const resultSymbolIds = this.reels.map((reel) => reel.resultCells.map((cell) => cell.symbolPoolItem.symbolId));
-        gameStore.actions.setSpinResult(resultSymbolIds);
+        gameStore.setSpinResult(resultSymbolIds);
     }
 
     public async animateWinCells() {

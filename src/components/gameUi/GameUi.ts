@@ -30,7 +30,7 @@ export class GameUi extends BaseComponent {
 
         this.slamStopButton = new Button("slamStopButton");
         this.slamStopButton.setOnClick(() => {
-            gameStore.actions.setSlamStopped(true);
+            gameStore.setSlamStopped(true);
             this.slamStopButton.enabled = false;
         });
         this.gameReelButtons.set(GameUiReelButton.SlamStopButton, this.slamStopButton);
@@ -38,15 +38,15 @@ export class GameUi extends BaseComponent {
         this.betToggle = new Toggle(
             "betToggle",
             gameStore.props.betSteps,
-            gameStore.actions.incrementBet,
-            gameStore.actions.decrementBet,
+            gameStore.incrementBet,
+            gameStore.decrementBet,
             gameStore.props.currentBetIdx,
         );
         this.winLinesToggle = new Toggle(
             "winLinesToggle",
             gameStore.props.winLines.map((line, idx) => idx + 1),
-            gameStore.actions.incrementLinesPlayed,
-            gameStore.actions.decrementLinesPlayed,
+            gameStore.incrementLinesPlayed,
+            gameStore.decrementLinesPlayed,
             gameStore.props.activeWinLinesIdx,
         );
 

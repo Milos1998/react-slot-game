@@ -1,4 +1,5 @@
 import { createStore } from "zustand/vanilla";
+import { immer } from "zustand/middleware/immer";
 import { subscribeWithSelector } from "zustand/middleware";
 import { SymbolId } from "../components/reels/symbols/Symbols.config";
 
@@ -68,118 +69,27 @@ type GameStoreProps = {
     currentWinLines: () => WinLine[];
 };
 
-type GameStoreActions = {
-    setCurrentFlows: (newProps: GameFlowName) => void;
-    setNextFlows: (newProps: GameFlowName) => void;
-    setSlamStopped: (newProps: boolean) => void;
-    incrementBet: () => void;
-    decrementBet: () => void;
-    setSpinResult: (newProps: SymbolId[][]) => void;
-    setSpinWins: (newProps: Win[]) => void;
-    incrementLinesPlayed: () => void;
-    decrementLinesPlayed: () => void;
-};
-
 class GameStore {
     private store;
 
     constructor() {
-        this.store = createStore<GameStoreProps & GameStoreActions>()(
-            subscribeWithSelector((set, get) => ({
-                currentFlows: GameFlowName.None,
-                nextFlows: GameFlowName.None,
-                slamStopped: false,
-                betSteps: [0.1, 0.2, 0.5, 1, 2, 3, 4, 5, 10],
-                currentBetIdx: 6,
-                spinResult: [],
-                spinWins: [],
-                winLines: initialWinLines,
-                activeWinLinesIdx: initialWinLines.length - 1,
-                currentWinLines: () => {
-                    return get().winLines.slice(0, get().activeWinLinesIdx + 1);
-                },
-                currentBet: () => {
-                    return get().betSteps[get().currentBetIdx];
-                },
-                totalWin: () => {
-                    return get().spinWins.reduce((prevSum, win) => prevSum + win.payoutAmount, 0);
-                },
-                incrementBet: () => {
-                    set((state) => {
-                        if (state.currentBetIdx < state.betSteps.length - 1) {
-                            return {
-                                ...state,
-                                currentBetIdx: state.currentBetIdx + 1,
-                            };
-                        }
-                        return state;
-                    });
-                },
-                decrementBet: () => {
-                    set((state) => {
-                        if (state.currentBetIdx > 0) {
-                            return {
-                                ...state,
-                                currentBetIdx: state.currentBetIdx - 1,
-                            };
-                        }
-                        return state;
-                    });
-                },
-                setSlamStopped: (newVal) => {
-                    set((state) => ({
-                        ...state,
-                        slamStopped: newVal,
-                    }));
-                },
-                setCurrentFlows: (newVal) => {
-                    set((state) => ({
-                        ...state,
-                        currentFlows: newVal,
-                        nextFlows: GameFlowName.None,
-                    }));
-                },
-                setNextFlows: (newVal) => {
-                    set((state) => ({
-                        ...state,
-                        nextFlows: newVal,
-                    }));
-                },
-                setSpinResult: (newVal) => {
-                    set((state) => ({
-                        ...state,
-                        spinResult: newVal,
-                    }));
-                },
-                setSpinWins: (newVal) => {
-                    set((state) => ({
-                        ...state,
-                        spinWins: newVal,
-                    }));
-                },
-                incrementLinesPlayed: () => {
-                    set((state) => {
-                        if (state.activeWinLinesIdx < state.winLines.length - 1) {
-                            return {
-                                ...state,
-                                activeWinLinesIdx: state.activeWinLinesIdx + 1,
-                            };
-                        }
-                        return state;
-                    });
-                },
-                decrementLinesPlayed: () => {
-                    set((state) => {
-                        if (state.activeWinLinesIdx > 0) {
-                            return {
-                                ...state,
-                                activeWinLinesIdx: state.activeWinLinesIdx - 1,
-                            };
-                        }
-                        return state;
-                    });
-                },
-            })),
+        this.store = createStore<GameStoreProps>()(
+            subscribeWithSelector(
+                immer((set, get) => ({
+                    currentFlows: GameFlowName.None,
+                    nextFlows: GameFlowName.None,
+                    slamStopped: false,
+                    betSteps: [0.1, 0.2, 0.5, 1, 2, 3, 4, 5, 10],
+                    currentBetIdx: 6,
+                    spinResult: [],
+                    spinWins: [],
+                    winLines: initialWinLines,
+                    activeWinLinesIdx: initialWinLines.length - 1,
+                    currentWinLines: () => get().winLines.slice(0, get().activeWinLinesIdx + 1),
+                    currentBet: () => get().betSteps[get().currentBetIdx],
+                    totalWin: () => get().spinWins.reduce((prevSum, win) => prevSum + win.payoutAmount, 0),
+                })),
+            ),
         );
     }
 
@@ -187,13 +97,72 @@ class GameStore {
         return this.store.getState();
     }
 
-    get actions(): GameStoreActions {
-        return this.store.getState();
-    }
-
     get subscribe() {
         return this.store.subscribe;
     }
+
+    incrementBet = () => {
+        this.store.setState((state) => {
+            if (state.currentBetIdx < state.betSteps.length - 1) {
+                state.currentBetIdx++;
+            }
+        });
+    };
+
+    decrementBet = () => {
+        this.store.setState((state) => {
+            if (state.currentBetIdx > 0) {
+                state.currentBetIdx--;
+            }
+        });
+    };
+
+    setSlamStopped = (slamStopped: boolean) => {
+        this.store.setState((state) => {
+            state.slamStopped = slamStopped;
+        });
+    };
+
+    setCurrentFlows = (currentFlows: GameFlowName) => {
+        this.store.setState((state) => {
+            state.currentFlows = currentFlows;
+            state.nextFlows = GameFlowName.None;
+        });
+    };
+
+    setNextFlows = (nextFlows: GameFlowName) => {
+        this.store.setState((state) => {
+            state.nextFlows = nextFlows;
+        });
+    };
+
+    setSpinResult = (spinResult: SymbolId[][]) => {
+        this.store.setState((state) => {
+            state.spinResult = spinResult;
+        });
+    };
+
+    setSpinWins = (spinWins: Win[]) => {
+        this.store.setState((state) => {
+            state.spinWins = spinWins;
+        });
+    };
+
+    incrementLinesPlayed = () => {
+        this.store.setState((state) => {
+            if (state.activeWinLinesIdx < state.winLines.length - 1) {
+                state.activeWinLinesIdx++;
+            }
+        });
+    };
+
+    decrementLinesPlayed = () => {
+        this.store.setState((state) => {
+            if (state.activeWinLinesIdx > 0) {
+                state.activeWinLinesIdx--;
+            }
+        });
+    };
 }
 
 export const gameStore = new GameStore();

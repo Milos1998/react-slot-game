@@ -52,9 +52,9 @@ class SceneController {
 
         if (orientation !== systemStore.props.orientation) {
             this.preOrientationChangeCallbacks.forEach((func) => func(orientation));
-            systemStore.actions.setOrientation(orientation);
+            systemStore.setOrientation(orientation);
         }
-        systemStore.actions.setCanvasAreaProps({ width: window.innerWidth, height: window.innerHeight });
+        systemStore.setCanvasAreaProps({ width: window.innerWidth, height: window.innerHeight });
     }
 
     private findAspectRatio(screenWidth: number, screenHeight: number, config: ScreenSize): number {
@@ -101,10 +101,10 @@ class SceneController {
     }
 
     private setupFpsUpdate() {
-        systemStore.actions.setFps(Math.round(this.ticker.FPS));
+        systemStore.setFps(Math.round(this.ticker.FPS));
 
         const timer = new Timer(this.fpsUpdateThresholdMs, -1, undefined, () => {
-            systemStore.actions.setFps(Math.round(this.ticker.FPS));
+            systemStore.setFps(Math.round(this.ticker.FPS));
         });
         timer.start(false);
     }

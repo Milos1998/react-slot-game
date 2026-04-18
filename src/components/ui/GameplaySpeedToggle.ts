@@ -6,8 +6,8 @@ export class GameplaySpeedToggle extends Toggle {
         super(
             layoutId,
             systemStore.props.gameplaySpeeds,
-            systemStore.actions.incrementGameplaySpeed,
-            systemStore.actions.decrementGameplaySpeed,
+            systemStore.incrementGameplaySpeed,
+            systemStore.decrementGameplaySpeed,
             systemStore.props.gameplaySpeedIdx,
         );
     }
