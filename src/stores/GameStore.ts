@@ -2,57 +2,12 @@ import { createStore } from "zustand/vanilla";
 import { immer } from "zustand/middleware/immer";
 import { subscribeWithSelector } from "zustand/middleware";
 import { SymbolId } from "../components/reels/symbols/Symbols.config";
+import { initialWinLines, Win, WinLine } from "../components/winController/Win.config";
 
 export enum GameFlowName {
     BaseGame,
     None,
 }
-
-export type Win = {
-    cellPositions: number[];
-    payoutAmount: number;
-};
-
-type WinLine = { cellPositions: number[] };
-
-const initialWinLines = [
-    {
-        cellPositions: [1, 1, 1, 1, 1],
-    },
-    {
-        cellPositions: [0, 0, 0, 0, 0],
-    },
-    {
-        cellPositions: [2, 2, 2, 2, 2],
-    },
-    {
-        cellPositions: [0, 1, 2, 1, 0],
-    },
-    {
-        cellPositions: [2, 1, 0, 1, 2],
-    },
-    {
-        cellPositions: [0, 0, 1, 0, 0],
-    },
-    {
-        cellPositions: [2, 2, 1, 2, 2],
-    },
-    {
-        cellPositions: [0, 0, 1, 2, 2],
-    },
-    {
-        cellPositions: [2, 2, 1, 0, 0],
-    },
-    {
-        cellPositions: [1, 1, 0, 1, 1],
-    },
-    {
-        cellPositions: [1, 1, 2, 1, 1],
-    },
-    {
-        cellPositions: [2, 2, 2, 2, 0],
-    },
-];
 
 type GameStoreProps = {
     currentFlows: GameFlowName;

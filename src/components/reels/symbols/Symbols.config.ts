@@ -7,66 +7,66 @@ export const symbolsMapping: SymbolMapping[] = [
     {
         symbolId: "9",
         assetName: "9",
-        payouts: [0, 0, 1, 2, 3],
+        payouts: [0, 0, 1],
     },
     // {
     //     symbolId: "10",
     //     assetName: "10",
-    //     payouts: [0, 0, 1, 2, 3],
+    //     payouts: [0, 0, 1],
     // },
     // {
     //     symbolId: "j",
     //     assetName: "j",
-    //     payouts: [0, 0, 1, 2, 3],
+    //     payouts: [0, 0, 1],
     // },
     // {
     //     symbolId: "q",
     //     assetName: "q",
-    //     payouts: [0, 0, 1, 2, 3],
+    //     payouts: [0, 0, 1],
     // },
     // {
     //     symbolId: "k",
     //     assetName: "k",
-    //     payouts: [0, 0, 1, 2, 3],
+    //     payouts: [0, 0, 1],
     // },
     // {
     //     symbolId: "a",
     //     assetName: "a",
-    //     payouts: [0, 0, 1, 2, 3],
+    //     payouts: [0, 0, 1],
     // },
     {
         symbolId: "pistols",
         assetName: "pistols",
-        payouts: [0, 1, 2, 3, 5],
+        payouts: [0, 1, 2],
     },
-    // {
-    //     symbolId: "hat",
-    //     assetName: "hat",
-    //     payouts: [0, 1, 2, 3, 5],
-    // },
-    // {
-    //     symbolId: "bag",
-    //     assetName: "bag",
-    //     payouts: [0, 1, 2, 3, 5],
-    // },
+    {
+        symbolId: "hat",
+        assetName: "hat",
+        payouts: [0, 1, 2],
+    },
+    {
+        symbolId: "bag",
+        assetName: "bag",
+        payouts: [0, 1, 2],
+    },
     {
         symbolId: "longhorn",
         assetName: "longhorn",
-        payouts: [0, 1, 2, 3, 5],
+        payouts: [0, 1, 2],
     },
     {
         symbolId: "wanted",
         assetName: "wanted",
-        payouts: [0, 2, 4, 6, 8],
+        payouts: [0, 2, 4],
     },
     {
         symbolId: "sherif",
         assetName: "sherif",
-        payouts: [0, 3, 5, 7, 10],
+        payouts: [0, 3, 5],
     },
     {
         symbolId: "wild",
         assetName: "wild",
-        payouts: [0, 1, 3, 5, 10],
+        payouts: [0, 1, 3],
     },
 ] as const;

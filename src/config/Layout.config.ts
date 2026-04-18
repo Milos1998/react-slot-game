@@ -107,7 +107,7 @@ export const hierarchyTree: LayoutHierarchyNode = {
                         y: 0,
                     },
                     position: {
-                        x: -240,
+                        x: -120,
                         y: -168,
                     },
                 },
@@ -120,7 +120,7 @@ export const hierarchyTree: LayoutHierarchyNode = {
                         y: 0,
                     },
                     position: {
-                        x: -120,
+                        x: 0,
                         y: -168,
                     },
                 },
@@ -133,33 +133,7 @@ export const hierarchyTree: LayoutHierarchyNode = {
                         y: 0,
                     },
                     position: {
-                        x: 0,
-                        y: -168,
-                    },
-                },
-                {
-                    name: "reel3",
-                    type: "sprite",
-                    texture: "reel-backing",
-                    anchor: {
-                        x: 0.5,
-                        y: 0,
-                    },
-                    position: {
                         x: 120,
-                        y: -168,
-                    },
-                },
-                {
-                    name: "reel4",
-                    type: "sprite",
-                    texture: "reel-backing",
-                    anchor: {
-                        x: 0.5,
-                        y: 0,
-                    },
-                    position: {
-                        x: 240,
                         y: -168,
                     },
                 },
