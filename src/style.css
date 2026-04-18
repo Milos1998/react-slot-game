@@ -1,0 +1,40 @@
+html {
+    user-select: none;
+    height: 100%;
+}
+
+* {
+    padding: 0;
+    border: 0;
+    margin: 0;
+}
+
+#click-to-start {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    font-size: large;
+    margin: 0;
+}
+
+#pixi-canvas {
+    display: none;
+    overflow: hidden;
+}
+
+body {
+    height: 100%;
+    background-color: darkslategray;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
