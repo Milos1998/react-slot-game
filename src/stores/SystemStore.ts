@@ -1,4 +1,4 @@
-import { createStore } from "zustand/vanilla";
+import { createStore, StoreApi } from "zustand/vanilla";
 import { subscribeWithSelector } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
@@ -56,6 +56,10 @@ class SystemStore {
                 })),
             ),
         );
+    }
+
+    get reactStore(): StoreApi<SystemStoreProps> {
+        return this.store;
     }
 
     get props(): SystemStoreProps {

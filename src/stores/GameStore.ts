@@ -1,4 +1,4 @@
-import { createStore } from "zustand/vanilla";
+import { createStore, StoreApi } from "zustand/vanilla";
 import { immer } from "zustand/middleware/immer";
 import { subscribeWithSelector } from "zustand/middleware";
 import { SymbolId } from "../components/reels/symbols/Symbols.config";
@@ -35,7 +35,7 @@ class GameStore {
                     nextFlows: GameFlowName.None,
                     slamStopped: false,
                     betSteps: [0.1, 0.2, 0.5, 1, 2, 3, 4, 5, 10],
-                    currentBetIdx: 6,
+                    currentBetIdx: 7,
                     spinResult: [],
                     spinWins: [],
                     winLines: initialWinLines,
@@ -46,6 +46,10 @@ class GameStore {
                 })),
             ),
         );
+    }
+
+    get reactStore(): StoreApi<GameStoreProps> {
+        return this.store;
     }
 
     get props(): GameStoreProps {
