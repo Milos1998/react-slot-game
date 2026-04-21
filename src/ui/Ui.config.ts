@@ -18,3 +18,10 @@ export const uiCommonStyles = {
         backgroundColor: uiStylingConstants.hoverColor,
     },
 } as const satisfies Record<string, React.CSSProperties>;
+
+export enum ReelButtons {
+    None,
+    SpinButton,
+    StopButton,
+    SkipButton,
+}

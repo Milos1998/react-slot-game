@@ -1,9 +1,9 @@
-import { ComponentPropsWithoutRef, useMemo, useState } from "react";
+import { ComponentPropsWithoutRef, useState } from "react";
 import { uiCommonStyles } from "./Ui.config";
 
 type ButtonProps = { isEnabled: boolean } & ComponentPropsWithoutRef<"button">;
 
-export function Button({ isEnabled, ...props}: ButtonProps) {
+export function Button({ isEnabled, ...props }: ButtonProps) {
     const [isHovered, setIsHovered] = useState(false);
 
     const buttonStyle: React.CSSProperties = {
@@ -19,8 +19,7 @@ export function Button({ isEnabled, ...props}: ButtonProps) {
             disabled={!isEnabled}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            >
-        </button>
+        ></button>
     );
 }
 

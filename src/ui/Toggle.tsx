@@ -2,15 +2,19 @@ import { ComponentPropsWithoutRef } from "react";
 import { Button } from "./Button";
 import { uiStylingConstants } from "./Ui.config";
 
-type ToggleProps = { onIncrement: () => void, onDecrement: () => void, isEnabled: boolean } & ComponentPropsWithoutRef<"div">;
+type ToggleProps = { onIncrement: () => void; onDecrement: () => void; isEnabled: boolean } & ComponentPropsWithoutRef<"div">;
 
 //TODO add logic to disable toggles when at the edge of toggle steps
-export function Toggle({ onIncrement, onDecrement, isEnabled, ...props}: ToggleProps) {
+export function Toggle({ onIncrement, onDecrement, isEnabled, ...props }: ToggleProps) {
     return (
-        <div {...props} style={{...styles.toggle, ...props.style}}>
-            <Button style={styles.toggleButton} onClick={onDecrement} isEnabled={isEnabled}>-</Button>
+        <div {...props} style={{ ...styles.toggle, ...props.style }}>
+            <Button style={styles.toggleButton} onClick={onDecrement} isEnabled={isEnabled}>
+                -
+            </Button>
             {props.children}
-            <Button style={styles.toggleButton} onClick={onIncrement} isEnabled={isEnabled}>+</Button>
+            <Button style={styles.toggleButton} onClick={onIncrement} isEnabled={isEnabled}>
+                +
+            </Button>
         </div>
     );
 }

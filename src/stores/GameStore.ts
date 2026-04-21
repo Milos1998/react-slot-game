@@ -3,6 +3,7 @@ import { immer } from "zustand/middleware/immer";
 import { subscribeWithSelector } from "zustand/middleware";
 import { SymbolId } from "../components/reels/symbols/Symbols.config";
 import { initialWinLines, Win, WinLine } from "../components/winController/Win.config";
+import { ReelButtons as ReelButton } from "../ui/Ui.config";
 
 export enum GameFlowName {
     BaseGame,
@@ -23,11 +24,16 @@ type GameStoreProps = {
     activeWinLinesIdx: number;
     currentWinLines: () => WinLine[];
     isGameUiEnabled: boolean;
+    balance: number;
+    presentReelButton: ReelButton;
+    isReelButtonActive: boolean;
+    isSkipped: boolean;
 };
 
 class GameStore {
     private store;
 
+    private flowBlockerResolve: null | (() => void) = null;
     constructor() {
         this.store = createStore<GameStoreProps>()(
             subscribeWithSelector(
@@ -45,6 +51,10 @@ class GameStore {
                     currentBet: () => get().betSteps[get().currentBetIdx],
                     totalWin: () => get().spinWins.reduce((prevSum, win) => prevSum + win.payoutAmount, 0),
                     isGameUiEnabled: false,
+                    balance: 1000,
+                    presentReelButton: ReelButton.None,
+                    isReelButtonActive: false,
+                    isSkipped: false,
                 })),
             ),
         );
@@ -62,7 +72,7 @@ class GameStore {
         return this.store.subscribe;
     }
 
-    incrementBet = () => {
+    public incrementBet = () => {
         this.store.setState((state) => {
             if (state.currentBetIdx < state.betSteps.length - 1) {
                 state.currentBetIdx++;
@@ -70,7 +80,7 @@ class GameStore {
         });
     };
 
-    decrementBet = () => {
+    public decrementBet = () => {
         this.store.setState((state) => {
             if (state.currentBetIdx > 0) {
                 state.currentBetIdx--;
@@ -78,38 +88,38 @@ class GameStore {
         });
     };
 
-    setSlamStopped = (slamStopped: boolean) => {
+    public setSlamStopped = (slamStopped: boolean) => {
         this.store.setState((state) => {
             state.slamStopped = slamStopped;
         });
     };
 
-    setCurrentFlows = (currentFlows: GameFlowName) => {
+    public setCurrentFlows = (currentFlows: GameFlowName) => {
         this.store.setState((state) => {
             state.currentFlows = currentFlows;
             state.nextFlows = GameFlowName.None;
         });
     };
 
-    setNextFlows = (nextFlows: GameFlowName) => {
+    public setNextFlows = (nextFlows: GameFlowName) => {
         this.store.setState((state) => {
             state.nextFlows = nextFlows;
         });
     };
 
-    setSpinResult = (spinResult: SymbolId[][]) => {
+    public setSpinResult = (spinResult: SymbolId[][]) => {
         this.store.setState((state) => {
             state.spinResult = spinResult;
         });
     };
 
-    setSpinWins = (spinWins: Win[]) => {
+    public setSpinWins = (spinWins: Win[]) => {
         this.store.setState((state) => {
             state.spinWins = spinWins;
         });
     };
 
-    incrementLinesPlayed = () => {
+    public incrementLinesPlayed = () => {
         this.store.setState((state) => {
             if (state.activeWinLinesIdx < state.winLines.length - 1) {
                 state.activeWinLinesIdx++;
@@ -117,7 +127,7 @@ class GameStore {
         });
     };
 
-    decrementLinesPlayed = () => {
+    public decrementLinesPlayed = () => {
         this.store.setState((state) => {
             if (state.activeWinLinesIdx > 0) {
                 state.activeWinLinesIdx--;
@@ -125,9 +135,40 @@ class GameStore {
         });
     };
 
-    setIsGameUiEnabled = (isGameUiEnabled: boolean) => {
+    public setIsGameUiEnabled = (isGameUiEnabled: boolean) => {
         this.store.setState((state) => {
             state.isGameUiEnabled = isGameUiEnabled;
+        });
+    };
+
+    public decrementBalance = () => {
+        this.store.setState((state) => {
+            state.balance -= state.currentBet() * (state.activeWinLinesIdx + 1);
+        });
+    };
+
+    public setPresentReelButton = (button: ReelButton, isActive: boolean) => {
+        this.store.setState((state) => {
+            state.isReelButtonActive = isActive;
+            state.presentReelButton = button;
+        });
+    };
+
+    public blockGameFlow = () => {
+        return new Promise<void>((res) => {
+            this.flowBlockerResolve = res;
+        });
+    };
+
+    public unblockGameFlow = () => {
+        if (this.flowBlockerResolve !== null) {
+            this.flowBlockerResolve();
+        }
+    };
+
+    public setIsSkipped = (isSkipped: boolean) => {
+        this.store.setState((state) => {
+            state.isSkipped = isSkipped;
         });
     };
 }

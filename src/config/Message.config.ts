@@ -10,8 +10,10 @@ export const messages = {
     gameUi_bet: "Bet",
     gameUi_lines: "Lines",
     gameUi_win: "Win",
+    gameUi_balance: "Balance",
     gameUi_spin: "SPIN",
     gameUi_stop: "STOP",
+    gameUi_skip: "SKIP",
     ui_okLabel: "Ok",
     ui_introMessage:
         "Hello, welcome to my slot game!\n\nTo check out different layouts rotate the device, or reduce the size of browser window.\n\nTo change gameplay speed use the toggle in the upper right corner.\n\nTo check out crash recovery you can throttle network to offline and spin the reels.\n\nHave fun!",
