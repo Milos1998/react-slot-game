@@ -32,7 +32,6 @@ const reactUi = document.getElementById("react-ui") as HTMLElement;
 const root = createRoot(reactUi);
 root.render(<UiRoot />);
 
-
 gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
 

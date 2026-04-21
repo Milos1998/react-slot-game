@@ -5,6 +5,8 @@
     },
     "eslint.validate": [
         "javascript",
-        "typescript"
+        "typescript",
+        "javascriptreact",
+        "typescriptreact"
     ]
 }
