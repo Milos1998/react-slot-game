@@ -22,6 +22,7 @@ type GameStoreProps = {
     winLines: WinLine[];
     activeWinLinesIdx: number;
     currentWinLines: () => WinLine[];
+    isGameUiEnabled: boolean;
 };
 
 class GameStore {
@@ -43,6 +44,7 @@ class GameStore {
                     currentWinLines: () => get().winLines.slice(0, get().activeWinLinesIdx + 1),
                     currentBet: () => get().betSteps[get().currentBetIdx],
                     totalWin: () => get().spinWins.reduce((prevSum, win) => prevSum + win.payoutAmount, 0),
+                    isGameUiEnabled: false,
                 })),
             ),
         );
@@ -120,6 +122,12 @@ class GameStore {
             if (state.activeWinLinesIdx > 0) {
                 state.activeWinLinesIdx--;
             }
+        });
+    };
+
+    setIsGameUiEnabled = (isGameUiEnabled: boolean) => {
+        this.store.setState((state) => {
+            state.isGameUiEnabled = isGameUiEnabled;
         });
     };
 }

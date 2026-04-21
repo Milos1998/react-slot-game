@@ -1,4 +1,6 @@
-type MeterProps = { label: string, value: number } & React.HTMLProps<HTMLDivElement>;
+import { ComponentPropsWithoutRef } from "react";
+
+type MeterProps = { label: string, value: number } & ComponentPropsWithoutRef<"div">;
 
 export function Meter({ label, value, ...props}: MeterProps) {
     return (<div {...props} style={{...styles.meter, ...props.style}}>
@@ -9,7 +11,6 @@ export function Meter({ label, value, ...props}: MeterProps) {
 
 const styles = {
     meter: {
-        color: "white",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",

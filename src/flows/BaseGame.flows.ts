@@ -13,7 +13,7 @@ export class BaseGameFlows extends BaseFlows {
             this.components.gameplaySpeedToggle.fadeIn(),
             this.components.gameUi.fadeIn(),
         ]);
-        yield (this.components.gameplaySpeedToggle.enabled = true);
+        yield systemStore.setIsSystemUiEnabled(true);
     }
 
     public async *introFlow() {
@@ -22,9 +22,9 @@ export class BaseGameFlows extends BaseFlows {
 
     public async *requestFlow() {
         yield gameStore.setSlamStopped(false);
-        yield this.components.gameUi.setEnabled(true);
+        yield gameStore.setIsGameUiEnabled(true);
         yield await this.components.gameUi.awaitSpinPress();
-        yield this.components.gameUi.setEnabled(false);
+        yield gameStore.setIsGameUiEnabled(false);
         yield this.components.gameUi.updateWinMeter("");
         yield await this.components.reelSet.startReelSpin();
         // NOTE: added this just to demonstrate recovery flow, would obviously fetch data from dedicated component if done for real

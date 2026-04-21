@@ -33,6 +33,7 @@ type SystemStoreProps = {
     gameplaySpeedIdx: number;
     getGameplaySpeed: () => number;
     systemError: Error | null;
+    isSystemUiEnabled: boolean;
 };
 
 class SystemStore {
@@ -50,9 +51,8 @@ class SystemStore {
                     gameplaySpeeds: [0.1, 0.5, 1, 2, 5, 10],
                     gameplaySpeedIdx: 2,
                     systemError: null,
-                    getGameplaySpeed: () => {
-                        return get().gameplaySpeeds[get().gameplaySpeedIdx];
-                    },
+                    getGameplaySpeed: () => get().gameplaySpeeds[get().gameplaySpeedIdx],
+                    isSystemUiEnabled: false,
                 })),
             ),
         );
@@ -107,6 +107,12 @@ class SystemStore {
     setSystemError = (systemError: Error | null) => {
         this.store.setState((state) => {
             state.systemError = systemError;
+        });
+    };
+
+    setIsSystemUiEnabled = (isSystemUiEnabled: boolean) => {
+        this.store.setState((state) => {
+            state.isSystemUiEnabled = isSystemUiEnabled;
         });
     };
 }
