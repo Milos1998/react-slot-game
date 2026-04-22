@@ -3,6 +3,7 @@ import { subscribeWithSelector } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
 export enum Orientation {
+    None,
     Landscape,
     Portrait,
 }
@@ -24,6 +25,7 @@ type SystemStoreProps = {
         width: number;
         height: number;
     };
+    safeAreaAspectRatio: number;
     tickerSettings: {
         minFps: number;
         maxFps: number;
@@ -43,9 +45,10 @@ class SystemStore {
         this.store = createStore<SystemStoreProps>()(
             subscribeWithSelector(
                 immer((set, get) => ({
-                    orientation: Orientation.Portrait,
+                    orientation: Orientation.None,
                     safeAreaProps: { width: 0, height: 0 },
                     canvasAreaProps: { width: 0, height: 0 },
+                    safeAreaAspectRatio: -1,
                     tickerSettings: { minFps: 40, maxFps: 60 },
                     fps: 0,
                     gameplaySpeeds: [0.1, 0.5, 1, 2, 5, 10],
@@ -70,47 +73,59 @@ class SystemStore {
         return this.store.subscribe;
     }
 
-    setOrientation = (orientation: Orientation) => {
+    public setOrientation = (orientation: Orientation) => {
         this.store.setState((state) => {
             state.orientation = orientation;
         });
     };
-    setSafeAreaProps = (safeAreaProps: { width: number; height: number }) => {
+
+    public setSafeAreaProps = (safeAreaProps: { width: number; height: number }) => {
         this.store.setState((state) => {
             state.safeAreaProps = safeAreaProps;
         });
     };
-    setCanvasAreaProps = (canvasAreaProps: { width: number; height: number }) => {
+
+    public setCanvasAreaProps = (canvasAreaProps: { width: number; height: number }) => {
         this.store.setState((state) => {
             state.canvasAreaProps = canvasAreaProps;
         });
     };
-    setFps = (fps: number) => {
+
+    public setSafeAreaAspectRatio = (safeAreaAspectRatio: number) => {
+        this.store.setState((state) => {
+            state.safeAreaAspectRatio = safeAreaAspectRatio;
+        });
+    };
+
+    public setFps = (fps: number) => {
         this.store.setState((state) => {
             state.fps = fps;
         });
     };
-    incrementGameplaySpeed = () => {
+
+    public incrementGameplaySpeed = () => {
         this.store.setState((state) => {
             if (state.gameplaySpeedIdx < state.gameplaySpeeds.length - 1) {
                 state.gameplaySpeedIdx++;
             }
         });
     };
-    decrementGameplaySpeed = () => {
+
+    public decrementGameplaySpeed = () => {
         this.store.setState((state) => {
             if (state.gameplaySpeedIdx > 0) {
                 state.gameplaySpeedIdx--;
             }
         });
     };
-    setSystemError = (systemError: Error | null) => {
+
+    public setSystemError = (systemError: Error | null) => {
         this.store.setState((state) => {
             state.systemError = systemError;
         });
     };
 
-    setIsSystemUiEnabled = (isSystemUiEnabled: boolean) => {
+    public setIsSystemUiEnabled = (isSystemUiEnabled: boolean) => {
         this.store.setState((state) => {
             state.isSystemUiEnabled = isSystemUiEnabled;
         });

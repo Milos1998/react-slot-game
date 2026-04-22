@@ -20,9 +20,11 @@ class AssetLoader {
 
     public removeSplash() {
         const clickToStart = document.getElementById("click-to-start") as HTMLElement;
-        const canvas = document.getElementById("pixi-canvas") as HTMLCanvasElement;
         clickToStart.style.display = "none";
+        const canvas = document.getElementById("pixi-canvas") as HTMLCanvasElement;
         canvas.style.display = "block";
+        const reactUi = document.getElementById("react-ui") as HTMLElement;
+        reactUi.style.display = "flex";
     }
 }
 

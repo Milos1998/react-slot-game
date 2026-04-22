@@ -3,7 +3,7 @@ import { gameStore } from "../stores/GameStore";
 import { messages } from "../config/Message.config";
 import { Meter } from "./Meter";
 import { Toggle } from "./Toggle";
-import { systemStore } from "../stores/SystemStore";
+import { Orientation, systemStore } from "../stores/SystemStore";
 import { ReelButtons, uiStylingConstants } from "./Ui.config";
 import { Button } from "./Button";
 
@@ -19,49 +19,63 @@ export function UiRoot() {
     const isSkipped = useStore(gameStore.reactStore, (state) => state.isSkipped);
     const tickerSpeed = useStore(systemStore.reactStore, (state) => state.getGameplaySpeed());
     const fps = useStore(systemStore.reactStore, (state) => state.fps);
+    const safeAreaProps = useStore(systemStore.reactStore, (state) => state.safeAreaProps);
+    const safeAreaAspectRatio = useStore(systemStore.reactStore, (state) => state.safeAreaAspectRatio);
+    const orientation = useStore(systemStore.reactStore, (state) => state.orientation);
     const isSystemUiEnabled = useStore(systemStore.reactStore, (state) => state.isSystemUiEnabled);
 
+    const rootStyle = { ...styles.uiRoot, ...safeAreaProps, transform: `scale(${safeAreaAspectRatio})` };
+    if (orientation === Orientation.Landscape) {
+        Object.assign(rootStyle, styles.uiRootLandscape);
+    } else {
+        Object.assign(rootStyle, styles.uiRootPortrait);
+    }
+
     return (
-        <div id="uiRoot" style={styles.uiRoot}>
-            <Toggle
-                id="betToggle"
-                onDecrement={gameStore.decrementBet}
-                onIncrement={gameStore.incrementBet}
-                style={styles.gameUiElement}
-                isEnabled={isGameUiEnabled}
-            >
-                <Meter value={bet} label={messages.gameUi_bet} />
-            </Toggle>
+        <div id="uiRoot" style={rootStyle}>
+            <div className="systemUi" style={styles.systemUi}>
+                <Meter id="fpsMeter" value={fps} label={messages.fps_meter_label} style={styles.fpsMeter} />
 
-            <Meter id="winMeter" value={totalWin} label={messages.gameUi_win} style={styles.gameUiElement} />
+                <Toggle
+                    id="gameplaySpeedToggle"
+                    onDecrement={systemStore.decrementGameplaySpeed}
+                    onIncrement={systemStore.incrementGameplaySpeed}
+                    style={styles.gameplaySpeedToggle}
+                    isEnabled={isSystemUiEnabled}
+                >
+                    <Meter value={tickerSpeed} label={messages.gameplay_speed} style={styles.gameplaySpeedToggleMeter} />
+                </Toggle>
+            </div>
 
-            <Meter id="balanceMeter" value={balance} label={messages.gameUi_balance} style={styles.gameUiElement} />
+            <div className="gameUi" style={styles.gameUi}>
+                <Toggle
+                    id="betToggle"
+                    onDecrement={gameStore.decrementBet}
+                    onIncrement={gameStore.incrementBet}
+                    style={styles.gameUiElement}
+                    isEnabled={isGameUiEnabled}
+                >
+                    <Meter value={bet} label={messages.gameUi_bet} />
+                </Toggle>
 
-            <Toggle
-                id="winLinesToggle"
-                onDecrement={gameStore.decrementLinesPlayed}
-                onIncrement={gameStore.incrementLinesPlayed}
-                style={styles.gameUiElement}
-                isEnabled={isGameUiEnabled}
-            >
-                <Meter value={lines + 1} label={messages.gameUi_lines} />
-            </Toggle>
+                <Meter id="winMeter" value={totalWin} label={messages.gameUi_win} style={styles.gameUiElement} />
 
-            <Toggle
-                id="gameplaySpeedToggle"
-                onDecrement={systemStore.decrementGameplaySpeed}
-                onIncrement={systemStore.incrementGameplaySpeed}
-                style={styles.gameplaySpeedToggle}
-                isEnabled={isSystemUiEnabled}
-            >
-                <Meter value={tickerSpeed} label={messages.gameplay_speed} style={styles.gameplaySpeedToggleMeter} />
-            </Toggle>
+                <Toggle
+                    id="winLinesToggle"
+                    onDecrement={gameStore.decrementLinesPlayed}
+                    onIncrement={gameStore.incrementLinesPlayed}
+                    style={styles.gameUiElement}
+                    isEnabled={isGameUiEnabled}
+                >
+                    <Meter value={lines + 1} label={messages.gameUi_lines} />
+                </Toggle>
 
-            <Meter id="fpsMeter" value={fps} label={messages.fps_meter_label} style={styles.fpsMeter} />
+                <Meter id="balanceMeter" value={balance} label={messages.gameUi_balance} style={styles.gameUiElement} />
+            </div>
 
-            <div>
+            <div className="reelButtons" style={styles.reelButtons}>
                 {presentReelButton === ReelButtons.SpinButton && (
-                    <Button id="spinButton" onClick={gameStore.unblockGameFlow} isEnabled={isReelButtonActive} style={styles.reelButtons}>
+                    <Button id="spinButton" onClick={gameStore.unblockGameFlow} isEnabled={isReelButtonActive} style={styles.reelButton}>
                         {messages.gameUi_spin}
                     </Button>
                 )}
@@ -71,7 +85,7 @@ export function UiRoot() {
                         id="slamStopButton"
                         onClick={() => gameStore.setSlamStopped(true)}
                         isEnabled={isReelButtonActive && !slamStopped}
-                        style={styles.reelButtons}
+                        style={styles.reelButton}
                     >
                         {messages.gameUi_stop}
                     </Button>
@@ -82,7 +96,7 @@ export function UiRoot() {
                         id="skipButton"
                         onClick={() => gameStore.setIsSkipped(true)}
                         isEnabled={isReelButtonActive && !isSkipped}
-                        style={styles.reelButtons}
+                        style={styles.reelButton}
                     >
                         {messages.gameUi_skip}
                     </Button>
@@ -93,18 +107,40 @@ export function UiRoot() {
 }
 
 const styles = {
-    //TODO fix positioning
     uiRoot: {
         color: uiStylingConstants.fontColor,
-        display: "flex",
-        width: "100vw",
-        height: "100vh",
-        flexDirection: "column",
+        fontSize: "30px",
+        display: "grid",
         alignItems: "center",
         justifyContent: "center",
-        top: "800px",
-        left: "720px",
-        fontSize: "30px",
+    },
+    gameUi: {
+        gridArea: "gameUi",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-evenly",
+        flexWrap: "wrap",
+        gap: "10px",
+    },
+    uiRootLandscape: {
+        gridTemplateColumns: "1fr auto",
+        gridTemplateRows: "auto 1fr auto",
+        gridTemplateAreas: `
+            "systemUI systemUI"
+            ".        reelButtons"
+            "gameUi   gameUi"
+        `,
+    },
+    uiRootPortrait: {
+        gridTemplateColumns: "1fr",
+        gridTemplateRows: "auto 1fr auto auto",
+        gridTemplateAreas: `
+            "systemUI"
+            "."
+            "gameUi"
+            "reelButtons"
+        `,
     },
     gameUiElement: {
         backgroundColor: uiStylingConstants.inactiveColor,
@@ -114,6 +150,13 @@ const styles = {
         borderWidth: "6px",
         minWidth: "240px",
         minHeight: "70px",
+    },
+    systemUi: {
+        gridArea: "systemUI",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
     },
     gameplaySpeedToggle: {
         minWidth: "240px",
@@ -125,6 +168,10 @@ const styles = {
         flexDirection: "row-reverse",
     },
     reelButtons: {
+        gridArea: "reelButtons",
+        justifySelf: "center",
+    },
+    reelButton: {
         borderRadius: "50%",
         borderColor: uiStylingConstants.borderColor,
         borderStyle: "solid",

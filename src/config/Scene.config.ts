@@ -13,7 +13,7 @@ export const screenConfig: { orientation: Orientation; config: ScreenSize }[] = 
             maxWidth: 2000,
             maxHeight: 1400,
         },
-    } as const,
+    },
     {
         orientation: Orientation.Portrait,
         config: {
@@ -22,8 +22,8 @@ export const screenConfig: { orientation: Orientation; config: ScreenSize }[] = 
             maxWidth: 1400,
             maxHeight: 2000,
         },
-    } as const,
-];
+    },
+] as const;
 
 export const sceneConfig = {
     orientationRatio: 4 / 5,

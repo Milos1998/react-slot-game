@@ -53,7 +53,9 @@ class SceneController {
         if (orientation !== systemStore.props.orientation) {
             this.preOrientationChangeCallbacks.forEach((func) => func(orientation));
             systemStore.setOrientation(orientation);
+            systemStore.setSafeAreaProps({ width: config.minWidth, height: config.minHeight });
         }
+        systemStore.setSafeAreaAspectRatio(aspectRatio);
         systemStore.setCanvasAreaProps({ width: window.innerWidth, height: window.innerHeight });
     }
 
