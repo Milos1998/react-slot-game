@@ -55,4 +55,11 @@ export class Timer {
         this.isTicking = true;
         sceneController.ticker.add(this.tick, this);
     }
+
+    public static async sleep(durationMs: number) {
+        await new Promise<void>((res) => {
+            const timer = new Timer(durationMs, 1, res);
+            timer.start(false);
+        });
+    }
 }

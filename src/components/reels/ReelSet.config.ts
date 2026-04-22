@@ -13,11 +13,12 @@ export const baseReelsConfig: ReelSetConfig = [
             spinDirection: "TopToBottom",
             spinDurationMs: 2500,
             spinSpeed: 1,
-            spinStartDelaySec: 0.3,
+            spinStartDelaySec: 0,
             windDownDurationSec: 0.5,
             windDownEase: "none",
             windUpDurationSec: 0.5,
             windUpEase: "back.in(1.7)",
+            spinStopDelayMs: 0,
         },
     },
     {
@@ -37,6 +38,7 @@ export const baseReelsConfig: ReelSetConfig = [
             windDownEase: "none",
             windUpDurationSec: 0.5,
             windUpEase: "back.in(1.7)",
+            spinStopDelayMs: 2000,
         },
     },
     {
@@ -56,6 +58,7 @@ export const baseReelsConfig: ReelSetConfig = [
             windDownEase: "none",
             windUpDurationSec: 0.5,
             windUpEase: "back.in(1.7)",
+            spinStopDelayMs: 1000,
         },
     },
 ];

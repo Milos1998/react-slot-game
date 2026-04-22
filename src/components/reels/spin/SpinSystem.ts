@@ -2,6 +2,7 @@ import gsap from "gsap";
 import { sceneController } from "../../../controllers/SceneController";
 import { Reel } from "../Reel";
 import { gameStore } from "../../../stores/GameStore";
+import { Timer } from "../../../utils/Timer";
 
 export type ReelSpinProps = {
     spinSpeed: number;
@@ -11,6 +12,7 @@ export type ReelSpinProps = {
     windDownEase: gsap.EaseString | gsap.EaseFunction;
     windDownDurationSec: number;
     spinDurationMs: number;
+    spinStopDelayMs: number;
 };
 
 export abstract class SpinSystem {
@@ -45,6 +47,7 @@ export abstract class SpinSystem {
     }
 
     public async startWindDown() {
+        await Timer.sleep(this.props.spinStopDelayMs);
         sceneController.ticker.remove(this.onSpinTick, this);
     }
 
