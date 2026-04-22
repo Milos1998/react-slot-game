@@ -1,4 +1,3 @@
-import { messages } from "../config/Message.config";
 import { gameStore } from "../stores/GameStore";
 import { systemStore } from "../stores/SystemStore";
 import { ReelButtons } from "../ui/Ui.config";
@@ -7,7 +6,7 @@ import { BaseFlows } from "./Base.flows";
 export class BaseGameFlows extends BaseFlows {
     public async *startupFlow() {
         yield gameStore.setPresentReelButton(ReelButtons.SpinButton, false);
-        yield await this.components.gameHeading.fadeIn();
+        // yield await this.components.gameHeading.fadeIn();
         // yield await Promise.all([
         //     this.components.fpsMeter.fadeIn(),
         //     this.components.gameplaySpeedToggle.fadeIn(),
@@ -17,7 +16,7 @@ export class BaseGameFlows extends BaseFlows {
     }
 
     public async *introFlow() {
-        yield await this.components.alertsPopup.displayMessage(messages.ui_introMessage);
+        // yield await this.components.alertsPopup.displayMessage(messages.ui_introMessage);
     }
 
     public async *requestFlow() {
@@ -59,7 +58,7 @@ export class BaseGameFlows extends BaseFlows {
 
     public async *errorFlow() {
         yield await this.components.reelSet.stopReelSpin();
-        yield await this.components.alertsPopup.displayMessage(systemStore.props.systemError);
+        // yield await this.components.alertsPopup.displayMessage(systemStore.props.systemError);
         yield systemStore.setSystemError(null);
     }
 }

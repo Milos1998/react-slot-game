@@ -7,14 +7,9 @@ import { assetLoader } from "./loaders/AssetLoader";
 import { layoutController } from "./controllers/LayoutController";
 import { stateMachine } from "./stateMachines/StateMachine";
 import { GameFlowName } from "./stores/GameStore";
-import { FpsMeter } from "./components/ui/FpsMeter";
-import { GameplaySpeedToggle } from "./components/ui/GameplaySpeedToggle";
-import { BaseComponent } from "./components/BaseComponent";
 import { BaseGameFlows } from "./flows/BaseGame.flows";
 import { ReelSet } from "./components/reels/ReelSet";
 import { symbolSet } from "./components/reels/symbols/SymbolSet";
-import { GameUi } from "./components/gameUi/GameUi";
-import { AlertsPopup } from "./components/ui/AlertsPopup";
 import { WinController } from "./components/winController/WinController";
 import { createRoot } from "react-dom/client";
 import { UiRoot } from "./ui/UiRoot";
@@ -36,23 +31,13 @@ gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
 
 export type GameComponents = {
-    fpsMeter: FpsMeter;
-    gameplaySpeedToggle: GameplaySpeedToggle;
-    gameHeading: BaseComponent;
     reelSet: ReelSet;
-    gameUi: GameUi;
-    alertsPopup: AlertsPopup;
     winController: WinController;
 };
 
 function registerComponents(): GameComponents {
     return {
-        fpsMeter: new FpsMeter("fpsMeter"),
-        gameplaySpeedToggle: new GameplaySpeedToggle("gameplaySpeedToggle"),
-        gameHeading: new BaseComponent("gameHeading"),
         reelSet: new ReelSet("reelSet"),
-        gameUi: new GameUi("gameUi"),
-        alertsPopup: new AlertsPopup("alerts"),
         winController: new WinController("winController"),
     };
 }
