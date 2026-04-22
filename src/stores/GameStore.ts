@@ -28,6 +28,7 @@ type GameStoreProps = {
     presentReelButton: ReelButton;
     isReelButtonActive: boolean;
     isSkipped: boolean;
+    popupMessage: string | null;
 };
 
 class GameStore {
@@ -55,6 +56,7 @@ class GameStore {
                     presentReelButton: ReelButton.None,
                     isReelButtonActive: false,
                     isSkipped: false,
+                    popupMessage: null,
                 })),
             ),
         );
@@ -169,6 +171,12 @@ class GameStore {
     public setIsSkipped = (isSkipped: boolean) => {
         this.store.setState((state) => {
             state.isSkipped = isSkipped;
+        });
+    };
+
+    public setPopupMessage = (popupMessage: string | null) => {
+        this.store.setState((state) => {
+            state.popupMessage = popupMessage;
         });
     };
 }

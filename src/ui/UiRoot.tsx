@@ -17,6 +17,7 @@ export function UiRoot() {
     const isReelButtonActive = useStore(gameStore.reactStore, (state) => state.isReelButtonActive);
     const slamStopped = useStore(gameStore.reactStore, (state) => state.slamStopped);
     const isSkipped = useStore(gameStore.reactStore, (state) => state.isSkipped);
+    const popupMessage = useStore(gameStore.reactStore, (state) => state.popupMessage);
     const tickerSpeed = useStore(systemStore.reactStore, (state) => state.getGameplaySpeed());
     const fps = useStore(systemStore.reactStore, (state) => state.fps);
     const safeAreaProps = useStore(systemStore.reactStore, (state) => state.safeAreaProps);
@@ -33,6 +34,14 @@ export function UiRoot() {
 
     return (
         <div id="uiRoot" style={rootStyle}>
+            {popupMessage !== null && (
+                <div id="aletsPopup" style={styles.alertsPopup}>
+                    <p style={styles.alertsPopupMessage}>{popupMessage}</p>
+                    <Button id="spinButton" onClick={gameStore.unblockGameFlow} isEnabled={true} style={styles.aletrsPopupButton}>
+                        {messages.gameUi_okLabel}
+                    </Button>
+                </div>
+            )}
             <div className="systemUi" style={styles.systemUi}>
                 <Meter id="fpsMeter" value={fps} label={messages.fps_meter_label} style={styles.fpsMeter} />
 
@@ -180,5 +189,36 @@ const styles = {
         minHeight: "200px",
         color: uiStylingConstants.fontColor,
         fontSize: "50px",
+    },
+    alertsPopup: {
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        backgroundColor: uiStylingConstants.inactiveColor,
+        minWidth: "700px",
+        paddingBottom: "10px",
+        borderRadius: "10px",
+        borderColor: uiStylingConstants.borderColor,
+        borderStyle: "solid",
+        borderWidth: "6px",
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+    },
+    alertsPopupMessage: {
+        padding: "10px 40px 20px 40px",
+        color: uiStylingConstants.fontColor,
+        fontSize: "30px",
+        whiteSpace: "pre-line",
+    },
+    aletrsPopupButton: {
+        borderRadius: "10px",
+        borderColor: uiStylingConstants.borderColor,
+        borderStyle: "solid",
+        borderWidth: "4px",
+        color: uiStylingConstants.fontColor,
+        padding: "10px 20px",
+        fontSize: "30px",
     },
 } as const satisfies Record<string, React.CSSProperties>;

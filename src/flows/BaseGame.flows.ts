@@ -1,3 +1,4 @@
+import { messages } from "../config/Message.config";
 import { gameStore } from "../stores/GameStore";
 import { systemStore } from "../stores/SystemStore";
 import { ReelButtons } from "../ui/Ui.config";
@@ -16,7 +17,9 @@ export class BaseGameFlows extends BaseFlows {
     }
 
     public async *introFlow() {
-        // yield await this.components.alertsPopup.displayMessage(messages.ui_introMessage);
+        yield gameStore.setPopupMessage(messages.gameUi_introMessage);
+        yield await gameStore.blockGameFlow();
+        yield gameStore.setPopupMessage(null);
     }
 
     public async *requestFlow() {
@@ -58,7 +61,9 @@ export class BaseGameFlows extends BaseFlows {
 
     public async *errorFlow() {
         yield await this.components.reelSet.stopReelSpin();
-        // yield await this.components.alertsPopup.displayMessage(systemStore.props.systemError);
+        yield gameStore.setPopupMessage(systemStore.props.systemError!.message);
+        yield await gameStore.blockGameFlow();
         yield systemStore.setSystemError(null);
+        yield gameStore.setPopupMessage(null);
     }
 }
