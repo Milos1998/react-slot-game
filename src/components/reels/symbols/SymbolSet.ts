@@ -12,10 +12,13 @@ class SymbolSet {
         });
     }
 
-    public getRandomSymbol() {
+    public getRandomSymbolId() {
         const randomIdx = Math.floor(Math.random() * symbolsMapping.length);
-        const randomSymbolId = symbolsMapping[randomIdx].symbolId;
-        return this.getSymbol(randomSymbolId);
+        return symbolsMapping[randomIdx].symbolId;
+    }
+
+    public getRandomSymbol() {
+        return this.getSymbol(this.getRandomSymbolId());
     }
 
     public getSymbol(symbolId: SymbolId) {

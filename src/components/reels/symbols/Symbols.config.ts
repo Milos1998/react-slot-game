@@ -57,7 +57,7 @@ export const symbolsMapping: SymbolMapping[] = [
     {
         symbolId: "wanted",
         assetName: "wanted",
-        payouts: [0, 2, 4],
+        payouts: [0, 3, 4],
     },
     {
         symbolId: "sherif",

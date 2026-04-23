@@ -3,6 +3,7 @@ import { BaseComponent } from "../BaseComponent";
 import { ReelCell } from "./ReelCell";
 import { SpinSystem } from "./spin/SpinSystem";
 import { symbolSet } from "./symbols/SymbolSet";
+import { SymbolId } from "./symbols/Symbols.config";
 
 export type ReelProps = {
     reelHeight: number;
@@ -39,9 +40,14 @@ export class Reel extends BaseComponent {
         }
     }
 
-    public addRandomCell() {
-        const randomSymbol = symbolSet.getRandomSymbol();
-        const newCell = new ReelCell(randomSymbol);
+    public addReelCell(symbolId?: SymbolId) {
+        let symbol;
+        if (symbolId === undefined) {
+            symbol = symbolSet.getRandomSymbol();
+        } else {
+            symbol = symbolSet.getSymbol(symbolId);
+        }
+        const newCell = new ReelCell(symbol);
         this.container.addChild(newCell);
         this.reelCells.push(newCell);
         return newCell;

@@ -1,8 +1,8 @@
 import gsap from "gsap";
 import { sceneController } from "../../../controllers/SceneController";
 import { Reel } from "../Reel";
-import { gameStore } from "../../../stores/GameStore";
 import { Timer } from "../../../utils/Timer";
+import { SymbolId } from "../symbols/Symbols.config";
 
 export type ReelSpinProps = {
     spinSpeed: number;
@@ -11,8 +11,12 @@ export type ReelSpinProps = {
     windUpDurationSec: number;
     windDownEase: gsap.EaseString | gsap.EaseFunction;
     windDownDurationSec: number;
-    spinDurationMs: number;
     spinStopDelayMs: number;
+    anticipation: {
+        spinSpeed: number;
+        stopDelayMs: number;
+        windDownDurationSec: number;
+    };
 };
 
 export abstract class SpinSystem {
@@ -23,8 +27,6 @@ export abstract class SpinSystem {
     protected currentSpinSpeed: number = 0;
 
     protected props: ReelSpinProps;
-
-    protected spinDelayResolve: (() => void) | null = null;
 
     constructor(reel: Reel, spinProps: ReelSpinProps) {
         this.reel = reel;
@@ -46,31 +48,15 @@ export abstract class SpinSystem {
         });
     }
 
-    public async startWindDown() {
-        await Timer.sleep(this.props.spinStopDelayMs);
+    public async startWindDown(resultSymbolIds: SymbolId[], anticipate: boolean) {
+        if (anticipate) {
+            this.currentSpinSpeed = this.props.anticipation.spinSpeed;
+            await Timer.sleep(this.props.anticipation.stopDelayMs);
+        } else {
+            await Timer.sleep(this.props.spinStopDelayMs);
+        }
         sceneController.ticker.remove(this.onSpinTick, this);
     }
 
-    public async awaitMinSpinDelay() {
-        const unsubscribe = gameStore.subscribe(
-            (state) => state.slamStopped,
-            () => {
-                if (this.spinDelayResolve !== null) {
-                    this.spinDelayResolve();
-                }
-            },
-        );
-        await new Promise<void>((res) => {
-            this.spinDelayResolve = res;
-        });
-        this.spinDelayResolve = null;
-        unsubscribe();
-    }
-
-    protected onSpinTick() {
-        this.currentSpinDurationMs += sceneController.ticker.deltaMS;
-        if (this.currentSpinDurationMs >= this.props.spinDurationMs && this.spinDelayResolve !== null) {
-            this.spinDelayResolve();
-        }
-    }
+    protected onSpinTick() {}
 }

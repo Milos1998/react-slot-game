@@ -2,11 +2,12 @@ import { Text } from "pixi.js";
 import { gameStore } from "../../stores/GameStore";
 import { BaseComponent } from "../BaseComponent";
 import gsap from "gsap";
-import { symbolsMapping } from "../reels/symbols/Symbols.config";
+import { SymbolMapping, symbolsMapping } from "../reels/symbols/Symbols.config";
 
 const winControllerProps = {
     rollupDurationSec: 3,
     rollupHideDelaySec: 0.3,
+    minAnticipationMultiplier: 2,
 };
 
 export class WinController extends BaseComponent {
@@ -22,19 +23,23 @@ export class WinController extends BaseComponent {
 
     public calculateWin() {
         const { spinResult } = gameStore.props;
+        const anticipationReels = new Array(spinResult.length).fill(false);
         const wins = gameStore.props.currentWinLines().map((line) => {
-            let hitCount = 0;
             const lineSym = spinResult[0][line.cellPositions[0]];
+
+            const payoutDef = symbolsMapping.find((mapping) => mapping.symbolId === lineSym);
+            if (payoutDef === undefined) {
+                throw new Error(`Symbol mapping for symbol ${lineSym} does not exist`);
+            }
+
+            let hitCount = 0;
             for (let i = 1; i < line.cellPositions.length; i++) {
                 const currPos = line.cellPositions[i];
+                anticipationReels[i] = this.checkAnticipation(hitCount, payoutDef);
                 if (lineSym !== spinResult[i][currPos]) {
                     break;
                 }
                 hitCount++;
-            }
-            const payoutDef = symbolsMapping.find((mapping) => mapping.symbolId === lineSym);
-            if (payoutDef === undefined) {
-                throw new Error(`Symbol mapping for symbol ${lineSym} does not exist`);
             }
 
             return {
@@ -43,23 +48,40 @@ export class WinController extends BaseComponent {
             };
         });
         gameStore.setSpinWins(wins.filter((win) => win.payoutAmount > 0));
+        gameStore.setAnticipationReels(anticipationReels);
+    }
+
+    private checkAnticipation(matches: number, payoutDef: SymbolMapping) {
+        return payoutDef.payouts[matches] > winControllerProps.minAnticipationMultiplier;
     }
 
     public async playRollup(endVal: number) {
+        if (gameStore.props.isSkipped) {
+            return;
+        }
+
         this.rollup.text = "";
-        const fade = this.fadeIn();
-        const rollupAnim = new Promise((res) => {
-            const counter = { value: 0 };
-            gsap.to(counter, {
-                value: endVal,
-                duration: this.props.rollupDurationSec,
-                onUpdate: () => {
-                    this.rollup.text = Math.round(counter.value);
-                },
-                onComplete: res,
-            });
+        const counter = { value: 0 };
+        const rollupAnim = gsap.to(counter, {
+            value: endVal,
+            duration: this.props.rollupDurationSec,
+            onUpdate: () => {
+                this.rollup.text = Math.round(counter.value);
+            },
         });
-        await Promise.all([fade, rollupAnim]);
+        const rollupPromise = new Promise((res) => {
+            rollupAnim.eventCallback("onComplete", res);
+        });
+
+        const unsub = gameStore.subscribe(
+            (state) => state.isSkipped,
+            () => {
+                rollupAnim.totalProgress(1).pause(0);
+            },
+        );
+
+        await Promise.all([this.fadeIn(), rollupPromise]);
+        unsub();
         await this.fadeOut();
     }
 }

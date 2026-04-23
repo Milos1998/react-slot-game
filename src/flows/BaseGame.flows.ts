@@ -14,13 +14,12 @@ export class BaseGameFlows extends BaseFlows {
         //     this.components.gameUi.fadeIn(),
         // ]);
         yield systemStore.setIsSystemUiEnabled(true);
-    }
-
-    public async *introFlow() {
         yield gameStore.setPopupMessage(messages.gameUi_introMessage);
         yield await gameStore.blockGameFlow();
         yield gameStore.setPopupMessage(null);
     }
+
+    public async *introFlow() {}
 
     public async *requestFlow() {
         yield gameStore.setSlamStopped(false);
@@ -39,11 +38,11 @@ export class BaseGameFlows extends BaseFlows {
 
     public async *responseFlow() {
         yield gameStore.setPresentReelButton(ReelButtons.StopButton, true);
+        yield this.components.reelSet.setRandomSpinResult();
+        yield this.components.winController.calculateWin();
         yield await this.components.reelSet.awaitMinSpinDelay();
         yield gameStore.setPresentReelButton(ReelButtons.StopButton, false);
         yield await this.components.reelSet.stopReelSpin();
-        yield this.components.reelSet.setSpinResult();
-        yield this.components.winController.calculateWin();
         if (gameStore.props.totalWin() > 0) {
             yield gameStore.setPresentReelButton(ReelButtons.SkipButton, true);
             // yield this.components.gameUi.updateWinMeter(gameStore.props.totalWin().toString());
@@ -60,6 +59,7 @@ export class BaseGameFlows extends BaseFlows {
     public async *outroFlow() {}
 
     public async *errorFlow() {
+        // TODO fix error scenario (can revert to previous result symbols)
         yield await this.components.reelSet.stopReelSpin();
         yield gameStore.setPopupMessage(systemStore.props.systemError!.message);
         yield await gameStore.blockGameFlow();

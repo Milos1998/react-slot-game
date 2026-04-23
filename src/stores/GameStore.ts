@@ -19,6 +19,7 @@ type GameStoreProps = {
     currentBet: () => number;
     spinResult: SymbolId[][];
     spinWins: Win[];
+    anticipationReels: boolean[];
     totalWin: () => number;
     winLines: WinLine[];
     activeWinLinesIdx: number;
@@ -46,6 +47,7 @@ class GameStore {
                     currentBetIdx: 7,
                     spinResult: [],
                     spinWins: [],
+                    anticipationReels: [],
                     winLines: initialWinLines,
                     activeWinLinesIdx: initialWinLines.length - 1,
                     currentWinLines: () => get().winLines.slice(0, get().activeWinLinesIdx + 1),
@@ -118,6 +120,12 @@ class GameStore {
     public setSpinWins = (spinWins: Win[]) => {
         this.store.setState((state) => {
             state.spinWins = spinWins;
+        });
+    };
+
+    public setAnticipationReels = (anticipationReels: boolean[]) => {
+        this.store.setState((state) => {
+            state.anticipationReels = anticipationReels;
         });
     };
 

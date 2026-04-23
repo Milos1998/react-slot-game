@@ -7,24 +7,37 @@ import { baseReelsConfig } from "./ReelSet.config";
 import { BottomUpSpin } from "./spin/BottomUpSpin";
 import { ReelSpinProps } from "./spin/SpinSystem";
 import { TopToBottomSpin } from "./spin/TopToBottomSpin";
+import { Timer } from "../../utils/Timer";
+import { symbolSet } from "./symbols/SymbolSet";
+import { SymbolId } from "./symbols/Symbols.config";
 
 export type SpinDirection = "TopToBottom" | "BottomUp";
 
 export type ReelSetConfig = {
-    reelDefinition: ReelProps;
-    spinDefinition: ReelSpinProps & { spinDirection: SpinDirection };
-}[];
+    minSpinDurationMs: number;
+    spinStopReelOrder: number[];
+    reels: {
+        reelDefinition: ReelProps;
+        spinDefinition: ReelSpinProps & { spinDirection: SpinDirection };
+    }[];
+};
 
 export class ReelSet extends BaseComponent {
     private reels: Reel[] = [];
 
-    //NOTE: would have multiple configs defined in some kind of map and update this one when entering the bonus etc.
-    private config: ReelSetConfig = baseReelsConfig;
+    private config!: ReelSetConfig;
+
+    private minSpinDurationTimer = new Timer(0);
 
     constructor(layoutId: string) {
         super(layoutId);
 
-        this.config.forEach((reelConfig, idx) => {
+        this.setReelSetConfig(baseReelsConfig);
+    }
+
+    public setReelSetConfig(reelSetConfig: ReelSetConfig) {
+        this.config = reelSetConfig;
+        this.config.reels.forEach((reelConfig, idx) => {
             const reel = new Reel(`reel${idx}`, reelConfig.reelDefinition);
             reel.initReelSymbols();
             if (reelConfig.spinDefinition.spinDirection === "TopToBottom") {
@@ -41,19 +54,47 @@ export class ReelSet extends BaseComponent {
     }
 
     public async awaitMinSpinDelay() {
-        await Promise.all(this.reels.map((reel) => reel.spinSystem.awaitMinSpinDelay()));
+        const unsub = gameStore.subscribe(
+            (state) => state.slamStopped,
+            () => {
+                if (this.minSpinDurationTimer.isTicking) {
+                    this.minSpinDurationTimer.stop(true);
+                }
+            },
+        );
+        await new Promise<void>((res) => {
+            this.minSpinDurationTimer.durationMs = this.config.minSpinDurationMs;
+            this.minSpinDurationTimer.onComplete = res;
+            this.minSpinDurationTimer.start(true);
+        });
+        unsub();
     }
 
     public async stopReelSpin() {
-        await Promise.all(this.reels.map((reel) => reel.spinSystem.startWindDown()));
+        const { spinResult, anticipationReels } = gameStore.props;
+        for (let i = 0; i < this.config.spinStopReelOrder.length; i++) {
+            const reelIdx = this.config.spinStopReelOrder[i];
+            await this.reels[reelIdx].spinSystem.startWindDown(spinResult[reelIdx], anticipationReels[reelIdx]);
+        }
     }
 
-    public setSpinResult() {
-        const resultSymbolIds = this.reels.map((reel) => reel.resultCells.map((cell) => cell.symbolPoolItem.symbolId));
+    public setRandomSpinResult() {
+        const resultSymbolIds: SymbolId[][] = [];
+        for (let i = 0; i < this.reels.length; i++) {
+            const reelResultIds: SymbolId[] = [];
+            for (let j = 0; j < this.reels[i].props.cellCount; j++) {
+                reelResultIds.push(symbolSet.getRandomSymbolId());
+            }
+            resultSymbolIds.push(reelResultIds);
+        }
         gameStore.setSpinResult(resultSymbolIds);
     }
 
     public async animateWinCells() {
+        if (gameStore.props.isSkipped) {
+            return;
+        }
+
         const resultCells = this.reels.map((reel) => reel.resultCells);
 
         const { spinWins } = gameStore.props;
@@ -62,12 +103,20 @@ export class ReelSet extends BaseComponent {
             const winningCells = win.cellPositions.map((cellIdx, reelIdx) => resultCells[reelIdx][cellIdx]);
             tl.add(this.animateCells(winningCells));
         });
+
+        const unsub = gameStore.subscribe(
+            (state) => state.isSkipped,
+            () => {
+                tl.totalProgress(1).pause(0);
+            },
+        );
+
         await new Promise((res) => {
             tl.eventCallback("onComplete", res);
             tl.play();
         });
-        tl.clear();
-        tl.kill();
+        unsub();
+        tl.clear(true);
     }
 
     private animateCells(reelCells: ReelCell[]) {

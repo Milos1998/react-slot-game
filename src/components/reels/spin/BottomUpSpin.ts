@@ -2,6 +2,7 @@ import gsap from "gsap";
 import { sceneController } from "../../../controllers/SceneController";
 import { Reel } from "../Reel";
 import { ReelSpinProps, SpinSystem } from "./SpinSystem";
+import { SymbolId } from "../symbols/Symbols.config";
 
 export class BottomUpSpin extends SpinSystem {
     constructor(reel: Reel, spinProps: ReelSpinProps) {
@@ -11,27 +12,27 @@ export class BottomUpSpin extends SpinSystem {
     }
 
     public async startWindUp() {
-        this.addRandomCellToTheBottom();
+        this.addCellToTheBottom();
         await super.startWindUp();
     }
 
-    public async startWindDown() {
-        await super.startWindDown();
+    public async startWindDown(resultSymbolIds: SymbolId[], anticipate: boolean) {
+        await super.startWindDown(resultSymbolIds, anticipate);
 
         const { cellCount, reelCellHeight, reelHeight } = this.reel.props;
 
-        //NOTE: can add result cells here if needed
         for (let i = 0; i < cellCount; i++) {
-            this.addRandomCellToTheBottom();
+            this.addCellToTheBottom(resultSymbolIds[i]);
         }
         const bottomMostCell = this.reel.reelCells[this.reel.reelCells.length - 1];
         const remainingTravelDist = -bottomMostCell.y - reelCellHeight / 2 + reelHeight;
+        const duration = anticipate ? this.props.anticipation.windDownDurationSec : this.props.windDownDurationSec;
         await new Promise((res) => {
             gsap.to(this.reel.reelCells, {
                 pixi: {
                     y: `+=${remainingTravelDist}`,
                 },
-                duration: this.props.windDownDurationSec,
+                duration,
                 ease: this.props.windDownEase,
                 onComplete: res,
             });
@@ -43,7 +44,6 @@ export class BottomUpSpin extends SpinSystem {
     }
 
     protected onSpinTick(): void {
-        super.onSpinTick();
         this.updateCellPositions(sceneController.ticker.deltaMS);
         this.checkMovementThreshold();
     }
@@ -62,12 +62,12 @@ export class BottomUpSpin extends SpinSystem {
         }
 
         this.reel.removeOldestCell();
-        this.addRandomCellToTheBottom();
+        this.addCellToTheBottom();
     }
 
-    private addRandomCellToTheBottom() {
+    private addCellToTheBottom(symbolId?: SymbolId) {
         const bottomCell = this.reel.reelCells[this.reel.reelCells.length - 1];
-        const newCell = this.reel.addRandomCell();
+        const newCell = this.reel.addReelCell(symbolId);
         newCell.position.y = bottomCell.y + this.reel.props.reelCellHeight;
     }
 
