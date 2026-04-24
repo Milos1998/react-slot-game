@@ -14,7 +14,7 @@ A lightweight Wild West–themed slot game built with TypeScript, Pixi.js, GSAP 
 - Global stores
 
 ## Live Demo
-Live demo at [this URL](https://milos1998.github.io/wild-west-3-slot/).
+Live demo at [this URL](https://milos1998.github.io/react-slot-game/).
 
 ## Project setup
 
