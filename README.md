@@ -1,12 +1,14 @@
 # Wild west 3 slot game
 
-A lightweight Wild West–themed slot game built with TypeScript, Pixi.js, GSAP and Zustand, focused on animation flow, state management, and rendering performance.
+A lightweight Wild West–themed slot game built with React, TypeScript, Pixi.js, GSAP and Zustand, focused on animation flow, state management, and rendering performance.
+React is used for UI elements, Pixi.js mainly for animating.
 
 ## Features
 - Reel spin logic & win evaluation
 - Scene & state management system
 - Smooth animations using GSAP
 - Modular architecture (Pixi.js + Zustand)
+- Reactive UI (React)
 - Asset loader
 - Scene controller
 - Layout controller
@@ -30,4 +32,9 @@ It will generate `docs` (instead of `dist` to utilize gh pages for hosting) fold
 
 ## Miscellaneous
 
-Built in ~1 week as a focused challenge. The goal was to prioritize architecture, animation flow, and core gameplay systems over polish.
+Total time spent on the project: < 18h. Started out by forking the (pixi only repo)[https://github.com/Milos1998/wild-west-3-slot].
+Goal was to prioritize architecture, animation flow, and core gameplay systems over polish.
+
+## Architecture notes
+
+Search project (`CTRL` + `SHIFT` + `P` in VSCode) for `TODO` and `NOTE` to find all relevant notes.

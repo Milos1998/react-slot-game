@@ -65,6 +65,9 @@ class SystemStore {
         return this.store;
     }
 
+    //NOTE: using "get props" for: a) brevity (it's easier to type store.props.abc than store.store.getState().abc)
+    //b) for splitting technology from interface (to be able to swap store to e.g. MboX without change impacting the whole codebase).
+    //Intention was the same with reactStore but I didn't really get there...
     get props(): SystemStoreProps {
         return this.store.getState();
     }

@@ -36,6 +36,7 @@ export type GameComponents = {
     winController: WinController;
 };
 
+//NOTE: here you can add game components that will be used inside the game flows
 function registerComponents(): GameComponents {
     return {
         reelSet: new ReelSet("reelSet"),
@@ -43,6 +44,8 @@ function registerComponents(): GameComponents {
     };
 }
 
+//NOTE: add GameFlowEnum and GameFlow implementation to add new feature flow handler.
+// to transition to that feature, simply set store's nextFlows to assigned GameFlowName enum
 function registerFlows(components: GameComponents) {
     stateMachine.registerFlow(GameFlowName.BaseGame, new BaseGameFlows(components));
     stateMachine.registerFlow(GameFlowName.CascadeGame, new CascadeGameFlows(components));

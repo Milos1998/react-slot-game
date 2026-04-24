@@ -1,5 +1,7 @@
 import { ReelSetConfig } from "./ReelSet";
 
+//NOTE: here we can controll spin type and behavior. To edit number of cells per reel edit the cellCount property. To add more
+//reels, just add another reel definition + update Layout.config.ts to add another container for said reel
 export const baseReelsConfig: ReelSetConfig = {
     minSpinDurationMs: 2500,
     spinStopReelOrder: [0, 1, 2],

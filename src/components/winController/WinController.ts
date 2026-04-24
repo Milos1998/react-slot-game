@@ -21,6 +21,7 @@ export class WinController extends BaseComponent {
         this.rollup = this.container.getChildByName(`${this.name}.rollup`) as Text;
     }
 
+    //NOTE: not too refined as this is not really what should be calculated on the client, but should read from the server
     public calculateWin() {
         const { spinResult } = gameStore.props;
         const anticipationReels = new Array(spinResult.length).fill(false);

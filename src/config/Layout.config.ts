@@ -78,6 +78,12 @@ export interface LayoutHierarchyNode extends LayoutConfigNode {
 /**
  * NOTE: would not store layout config inside .ts file if I were doing this without time constraint,
  * but for the sake of speed of work (not needing to load .json config, parse it properly etc.) it's done as is.
+ *
+ * Added advantage of this approach (rather than having .json config) is that we can reuse common configs. E.g. define textStyle
+ * outside of tree and reuse it through this config. Similar can be done for any set of properties.
+ */
+/**
+ * NOTE: here you define the hierarchy tree of the pixi.js elements.
  */
 export const hierarchyTree: LayoutHierarchyNode = {
     name: "game",
@@ -175,6 +181,11 @@ export const hierarchyTree: LayoutHierarchyNode = {
     ],
 };
 
+/**
+ * NOTE: here you define properties of each pixi.js element - for each orientation.
+ * Don't want element visible on landscape, but want it visible on portrait, just set appropriate visible values. Similar can be done
+ * for any set of properties.
+ */
 export const layoutConfigurations: { orientation: Orientation; layoutConfigNodes: LayoutConfigNode[] }[] = [
     {
         orientation: Orientation.Landscape,
@@ -224,6 +235,9 @@ export const layoutConfigurations: { orientation: Orientation; layoutConfigNodes
     },
 ];
 
+/**
+ * NOTE: here you define your asset bundles etc.
+ */
 export const manifest = {
     bundles: [
         {

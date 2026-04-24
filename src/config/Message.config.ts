@@ -2,6 +2,9 @@
  * NOTE: would not store layout config inside .ts file if I were doing this without time constraint,
  * but for the sake of speed of work (not needing to load .json config, parse it properly etc.) it's done as is.
  */
+/**
+ * NOTE: could easily update this object to singleton and add logic for translations while not updating the rest of the code
+ */
 export const messages = {
     fps_meter_label: "FPS:",
     gameplay_speed: "ticker speed:",

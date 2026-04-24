@@ -1,5 +1,6 @@
 import { GameComponents } from "../app";
 
+//NOTE: here is where we drive what happens when
 export abstract class BaseFlows {
     protected components: GameComponents;
 

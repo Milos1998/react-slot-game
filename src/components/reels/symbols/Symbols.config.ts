@@ -3,6 +3,7 @@ export type SymbolId = "9" | "10" | "j" | "q" | "k" | "a" | "pistols" | "hat" | 
 export type SymbolMapping = { symbolId: SymbolId; assetName: string; payouts: number[] };
 
 //NOTE: you can controll symbols present on the reels by (un)comenting certain symbol definitions
+//NOTE: you can update payouts arrays to add multipliers for x matched symbols - array [0, 0, 1, 2] will pay out 2 x totalBet for 4 matching symbols
 export const symbolsMapping: SymbolMapping[] = [
     {
         symbolId: "9",
