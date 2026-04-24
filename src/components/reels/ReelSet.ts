@@ -3,22 +3,22 @@ import { gameStore } from "../../stores/GameStore";
 import { BaseComponent } from "../BaseComponent";
 import { Reel, ReelProps } from "./Reel";
 import { ReelCell } from "./ReelCell";
-import { baseReelsConfig } from "./ReelSet.config";
+import { baseReelsConfig, cascadeReelsConfig } from "./ReelSet.config";
 import { BottomUpSpin } from "./spin/BottomUpSpin";
-import { ReelSpinProps } from "./spin/SpinSystem";
 import { TopToBottomSpin } from "./spin/TopToBottomSpin";
 import { Timer } from "../../utils/Timer";
 import { symbolSet } from "./symbols/SymbolSet";
 import { SymbolId } from "./symbols/Symbols.config";
-
-export type SpinDirection = "TopToBottom" | "BottomUp";
+import { CascadeSpin, CascadeSpinProps } from "./spin/CascadeSpin";
+import { playTimelineAsync } from "../../utils/UtilFunctions";
+import { NormalReelSpinProps } from "./spin/NormalReelSpin";
 
 export type ReelSetConfig = {
     minSpinDurationMs: number;
     spinStopReelOrder: number[];
     reels: {
         reelDefinition: ReelProps;
-        spinDefinition: ReelSpinProps & { spinDirection: SpinDirection };
+        spinDefinition: NormalReelSpinProps | CascadeSpinProps;
     }[];
 };
 
@@ -32,7 +32,7 @@ export class ReelSet extends BaseComponent {
     constructor(layoutId: string) {
         super(layoutId);
 
-        this.setReelSetConfig(baseReelsConfig);
+        this.setReelSetConfig(cascadeReelsConfig);
     }
 
     public setReelSetConfig(reelSetConfig: ReelSetConfig) {
@@ -40,10 +40,12 @@ export class ReelSet extends BaseComponent {
         this.config.reels.forEach((reelConfig, idx) => {
             const reel = new Reel(`reel${idx}`, reelConfig.reelDefinition);
             reel.initReelSymbols();
-            if (reelConfig.spinDefinition.spinDirection === "TopToBottom") {
+            if (reelConfig.spinDefinition.spinSystemType === "TopToBottom") {
                 reel.spinSystem = new TopToBottomSpin(reel, reelConfig.spinDefinition);
-            } else if (reelConfig.spinDefinition.spinDirection === "BottomUp") {
+            } else if (reelConfig.spinDefinition.spinSystemType === "BottomUp") {
                 reel.spinSystem = new BottomUpSpin(reel, reelConfig.spinDefinition);
+            } else if (reelConfig.spinDefinition.spinSystemType === "Cascade") {
+                reel.spinSystem = new CascadeSpin(reel, reelConfig.spinDefinition);
             }
             this.reels.push(reel);
         });
@@ -110,13 +112,8 @@ export class ReelSet extends BaseComponent {
                 tl.totalProgress(1).pause(0);
             },
         );
-
-        await new Promise((res) => {
-            tl.eventCallback("onComplete", res);
-            tl.play();
-        });
+        await playTimelineAsync(tl, true);
         unsub();
-        tl.clear(true);
     }
 
     private animateCells(reelCells: ReelCell[]) {

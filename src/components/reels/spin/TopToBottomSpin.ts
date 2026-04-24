@@ -1,11 +1,11 @@
 import gsap from "gsap";
 import { sceneController } from "../../../controllers/SceneController";
 import { Reel } from "../Reel";
-import { ReelSpinProps, SpinSystem } from "./SpinSystem";
+import { NormalReelSpin, NormalReelSpinProps } from "./NormalReelSpin";
 import { SymbolId } from "../symbols/Symbols.config";
 
-export class TopToBottomSpin extends SpinSystem {
-    constructor(reel: Reel, spinProps: ReelSpinProps) {
+export class TopToBottomSpin extends NormalReelSpin {
+    constructor(reel: Reel, spinProps: NormalReelSpinProps) {
         super(reel, spinProps);
 
         this.reel.reelCells.sort((a, b) => b.y - a.y);
@@ -73,6 +73,7 @@ export class TopToBottomSpin extends SpinSystem {
     }
 
     public dispose() {
+        //TODO use this.reel.removeCell(idx) method
         const reelCell = this.reel.reelCells.pop();
         if (reelCell) {
             this.reel.container.removeChild(reelCell);

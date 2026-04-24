@@ -3,38 +3,35 @@ import { sceneController } from "../../../controllers/SceneController";
 import { Reel } from "../Reel";
 import { Timer } from "../../../utils/Timer";
 import { SymbolId } from "../symbols/Symbols.config";
+import { ReelSpin, ReelSpinProps, ReelSpinType } from "./ReelSpin";
 
-export type ReelSpinProps = {
+export type NormalReelSpinProps = {
     spinSpeed: number;
-    spinStartDelaySec: number;
     windUpEase: gsap.EaseString;
     windUpDurationSec: number;
     windDownEase: gsap.EaseString | gsap.EaseFunction;
     windDownDurationSec: number;
-    spinStopDelayMs: number;
     anticipation: {
         spinSpeed: number;
         stopDelayMs: number;
         windDownDurationSec: number;
     };
-};
+    spinSystemType: Extract<ReelSpinType, "TopToBottom" | "BottomUp">;
+} & ReelSpinProps;
 
-export abstract class SpinSystem {
+export abstract class NormalReelSpin implements ReelSpin {
     protected reel: Reel;
 
-    protected currentSpinDurationMs: number = 0;
+    protected props: NormalReelSpinProps;
 
     protected currentSpinSpeed: number = 0;
 
-    protected props: ReelSpinProps;
-
-    constructor(reel: Reel, spinProps: ReelSpinProps) {
+    constructor(reel: Reel, spinProps: NormalReelSpinProps) {
         this.reel = reel;
         this.props = spinProps;
     }
 
     public async startWindUp() {
-        this.currentSpinDurationMs = 0;
         this.currentSpinSpeed = 0;
         sceneController.ticker.add(this.onSpinTick, this);
         await new Promise((res) => {

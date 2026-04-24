@@ -1,9 +1,9 @@
 import { Graphics } from "pixi.js";
 import { BaseComponent } from "../BaseComponent";
 import { ReelCell } from "./ReelCell";
-import { SpinSystem } from "./spin/SpinSystem";
 import { symbolSet } from "./symbols/SymbolSet";
 import { SymbolId } from "./symbols/Symbols.config";
+import { ReelSpin } from "./spin/ReelSpin";
 
 export type ReelProps = {
     reelHeight: number;
@@ -18,7 +18,7 @@ export class Reel extends BaseComponent {
 
     public reelCells: ReelCell[] = [];
 
-    public spinSystem!: SpinSystem;
+    public spinSystem!: ReelSpin;
 
     constructor(layoutId: string, props: ReelProps) {
         super(layoutId);
@@ -30,13 +30,13 @@ export class Reel extends BaseComponent {
     }
 
     public initReelSymbols() {
-        const { cellCount, reelCellHeight } = this.props;
+        const { cellCount } = this.props;
         for (let i = 0; i < cellCount; i++) {
             const randomSymbol = symbolSet.getRandomSymbol();
             const reelCell = new ReelCell(randomSymbol);
             this.reelCells.push(reelCell);
             this.container.addChild(reelCell);
-            reelCell.position.y = i * reelCellHeight + reelCellHeight / 2;
+            reelCell.position.y = this.getCellYPosition(i);
         }
     }
 
@@ -62,10 +62,24 @@ export class Reel extends BaseComponent {
         symbolSet.returnSymbol(cell.symbolPoolItem);
     }
 
+    public removeCell(cellIdx: number) {
+        const cell = this.reelCells.splice(cellIdx, 1)[0];
+        if (cell === undefined) {
+            return;
+        }
+        this.container.removeChild(cell);
+        symbolSet.returnSymbol(cell.symbolPoolItem);
+    }
+
     public get resultCells() {
         //would do this differently in real life...
         const cellsCpy = [...this.reelCells];
         cellsCpy.sort((a, b) => a.y - b.y);
         return cellsCpy;
+    }
+
+    public getCellYPosition(cellIdx: number) {
+        const { reelCellHeight } = this.props;
+        return cellIdx * reelCellHeight + reelCellHeight / 2;
     }
 }
