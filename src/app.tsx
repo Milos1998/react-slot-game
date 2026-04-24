@@ -13,6 +13,7 @@ import { symbolSet } from "./components/reels/symbols/SymbolSet";
 import { WinController } from "./components/winController/WinController";
 import { createRoot } from "react-dom/client";
 import { UiRoot } from "./ui/UiRoot";
+import { CascadeGameFlows } from "./flows/CascadeGame.flows";
 
 const canvas = document.getElementById("pixi-canvas") as HTMLCanvasElement;
 const app = new Application({
@@ -44,6 +45,7 @@ function registerComponents(): GameComponents {
 
 function registerFlows(components: GameComponents) {
     stateMachine.registerFlow(GameFlowName.BaseGame, new BaseGameFlows(components));
+    stateMachine.registerFlow(GameFlowName.CascadeGame, new CascadeGameFlows(components));
 }
 
 (async () => {

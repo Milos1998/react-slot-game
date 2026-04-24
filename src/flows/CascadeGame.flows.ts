@@ -4,7 +4,7 @@ import { systemStore } from "../stores/SystemStore";
 import { ReelButtons } from "../ui/Ui.config";
 import { BaseFlows } from "./Base.flows";
 
-export class BaseGameFlows extends BaseFlows {
+export class CascadeGameFlows extends BaseFlows {
     public async *startupFlow() {
         yield gameStore.setPresentReelButton(ReelButtons.SpinButton, false);
         yield systemStore.setIsSystemUiEnabled(true);
@@ -13,21 +13,16 @@ export class BaseGameFlows extends BaseFlows {
         yield gameStore.setPopupMessage(null);
     }
 
-    public async *introFlow() {}
+    public async *introFlow() {
+        yield gameStore.setIsGameUiEnabled(false);
+        yield gameStore.setPresentReelButton(ReelButtons.SpinButton, false);
+        yield gameStore.setSpinMode("Cascade");
+    }
 
     public async *requestFlow() {
         yield gameStore.setSlamStopped(false);
         yield gameStore.setIsSkipped(false);
-        yield gameStore.setIsGameUiEnabled(true);
-        yield gameStore.setPresentReelButton(ReelButtons.SpinButton, true);
-        yield await gameStore.blockGameFlow();
-        yield gameStore.decrementBalance();
-        yield gameStore.setIsGameUiEnabled(false);
-        yield gameStore.setPresentReelButton(ReelButtons.SpinButton, false);
-        // yield this.components.gameUi.updateWinMeter("");
         yield await this.components.reelSet.startReelSpin();
-        // NOTE: added this just to demonstrate recovery flow, would obviously fetch data from dedicated component if done for real
-        yield await fetch("https://jsonplaceholder.typicode.com/posts/1");
     }
 
     public async *responseFlow() {
@@ -39,12 +34,10 @@ export class BaseGameFlows extends BaseFlows {
         yield await this.components.reelSet.stopReelSpin();
         if (gameStore.props.totalWin() > 0) {
             yield gameStore.setPresentReelButton(ReelButtons.SkipButton, true);
-            // yield this.components.gameUi.updateWinMeter(gameStore.props.totalWin().toString());
             yield await this.components.winController.playRollup(gameStore.props.totalWin());
             yield await this.components.reelSet.animateWinCells();
-            // TODO add to balance
-            // yield gameStore.updateBalance();
-            yield gameStore.setNextFlows(GameFlowName.CascadeGame);
+        } else {
+            yield gameStore.setNextFlows(GameFlowName.BaseGame);
         }
         yield gameStore.setPresentReelButton(ReelButtons.SpinButton, false);
     }
@@ -52,7 +45,8 @@ export class BaseGameFlows extends BaseFlows {
     public async *resetFlow() {}
 
     public async *outroFlow() {
-        //TODO update backing image
+        yield gameStore.setSpinMode("Normal");
+        //TODO display total feature win
     }
 
     public async *errorFlow() {

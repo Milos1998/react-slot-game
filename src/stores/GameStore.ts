@@ -6,8 +6,9 @@ import { initialWinLines, Win, WinLine } from "../components/winController/Win.c
 import { ReelButtons as ReelButton } from "../ui/Ui.config";
 
 export enum GameFlowName {
-    BaseGame,
     None,
+    BaseGame,
+    CascadeGame,
 }
 type SpinMode = "Normal" | "Cascade";
 
