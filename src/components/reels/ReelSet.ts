@@ -49,7 +49,7 @@ export class ReelSet extends BaseComponent {
             this.config = cascadeReelsConfig;
         }
         this.config.reels.forEach((reelConfig, idx) => {
-            const reel = new Reel(`reel${idx}`, reelConfig.reelDefinition);
+            const reel = new Reel(`reel${idx}`, reelConfig.reelDefinition, idx);
             reel.initReelSymbols();
             if (reelConfig.spinDefinition.spinSystemType === "TopToBottom") {
                 reel.spinSystem = new TopToBottomSpin(reel, reelConfig.spinDefinition);

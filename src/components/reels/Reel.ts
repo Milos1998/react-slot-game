@@ -20,13 +20,16 @@ export class Reel extends BaseComponent {
 
     public spinSystem!: ReelSpin;
 
-    constructor(layoutId: string, props: ReelProps) {
+    public readonly reelIndex: number;
+
+    constructor(layoutId: string, props: ReelProps, reelIndex: number) {
         super(layoutId);
 
         this.props = props;
         const mask = new Graphics().beginFill(0xfff).drawRect(-this.props.reelWidth / 2, 0, this.props.reelWidth, this.props.reelHeight);
         this.container.mask = mask;
         this.container.addChild(mask);
+        this.reelIndex = reelIndex;
     }
 
     public initReelSymbols() {

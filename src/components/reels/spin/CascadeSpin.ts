@@ -4,6 +4,7 @@ import { SymbolId } from "../symbols/Symbols.config";
 import { ReelCell } from "../ReelCell";
 import { playTimelineAsync } from "../../../utils/UtilFunctions";
 import { ReelSpin, ReelSpinProps, ReelSpinType } from "./ReelSpin";
+import { gameStore } from "../../../stores/GameStore";
 
 export type CascadeSpinProps = {
     disappearAnimProps: {
@@ -31,13 +32,28 @@ export class CascadeSpin implements ReelSpin {
         this.reel.reelCells.sort((a, b) => a.y - b.y);
     }
 
-    public setCellsToRemove(cellIdxs: number[]) {
-        this.cellsToRemove = cellIdxs;
+    public calcCellsToRemove() {
+        const { spinWins } = gameStore.props;
+
+        const removeAtIdx = new Array(this.reel.props.cellCount).fill(false);
+        if (spinWins.length === 0) {
+            removeAtIdx.fill(true);
+        } else {
+            spinWins.forEach((win) => {
+                const cellIdx = win.cellPositions[this.reel.reelIndex];
+                removeAtIdx[cellIdx] = true;
+            });
+        }
+        this.cellsToRemove = [];
+        removeAtIdx.forEach((shouldRemove, idx) => {
+            if (shouldRemove) {
+                this.cellsToRemove.push(idx);
+            }
+        });
     }
 
     public async startWindUp() {
-        //TODO remove
-        this.setCellsToRemove([1, 2]);
+        this.calcCellsToRemove();
         if (this.cellsToRemove.length === 0) {
             return;
         }
@@ -71,10 +87,10 @@ export class CascadeSpin implements ReelSpin {
             return;
         }
 
+        const cellsRemoved = this.reel.props.cellCount - this.reel.reelCells.length;
         const newCellPositions = new Array(this.reel.reelCells.length);
-        const { cellCount } = this.reel.props;
         this.reel.reelCells.forEach((cell, idx) => {
-            newCellPositions[idx] = this.reel.getCellYPosition(cellCount - idx - 1);
+            newCellPositions[idx] = this.reel.getCellYPosition(cellsRemoved + idx);
         });
 
         const tl = gsap.timeline({ paused: true });
@@ -110,13 +126,5 @@ export class CascadeSpin implements ReelSpin {
         await playTimelineAsync(tl, true);
 
         this.reel.reelCells.sort((a, b) => a.y - b.y);
-
-        resultSymbolIds.forEach((symbolId, idx) => {
-            if (this.reel.reelCells[idx].symbolPoolItem.symbolId !== symbolId) {
-                throw new Error(
-                    `Expected symbolId's to match for reel index: ${idx}; ServerId: ${symbolId}, ReelId: ${this.reel.reelCells[idx].symbolPoolItem.symbolId}`,
-                );
-            }
-        });
     }
 }
