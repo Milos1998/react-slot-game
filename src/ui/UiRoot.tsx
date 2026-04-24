@@ -18,6 +18,7 @@ export function UiRoot() {
     const slamStopped = useStore(gameStore.reactStore, (state) => state.slamStopped);
     const isSkipped = useStore(gameStore.reactStore, (state) => state.isSkipped);
     const popupMessage = useStore(gameStore.reactStore, (state) => state.popupMessage);
+    const spinMode = useStore(gameStore.reactStore, (state) => state.spinMode);
     const tickerSpeed = useStore(systemStore.reactStore, (state) => state.getGameplaySpeed());
     const fps = useStore(systemStore.reactStore, (state) => state.fps);
     const safeAreaProps = useStore(systemStore.reactStore, (state) => state.safeAreaProps);
@@ -35,15 +36,19 @@ export function UiRoot() {
     return (
         <div id="uiRoot" style={rootStyle}>
             {popupMessage !== null && (
-                <div id="aletsPopup" style={styles.alertsPopup}>
+                <div id="alertsPopup" style={styles.alertsPopup}>
                     <p style={styles.alertsPopupMessage}>{popupMessage}</p>
-                    <Button id="spinButton" onClick={gameStore.unblockGameFlow} isEnabled={true} style={styles.aletrsPopupButton}>
+                    <Button id="alertsPopupButton" onClick={gameStore.unblockGameFlow} isEnabled={true} style={styles.aletrsPopupButton}>
                         {messages.gameUi_okLabel}
                     </Button>
                 </div>
             )}
             <div className="systemUi" style={styles.systemUi}>
                 <Meter id="fpsMeter" value={fps} label={messages.fps_meter_label} style={styles.fpsMeter} />
+
+                <Button id="spinModeToggle" isEnabled={isGameUiEnabled} onClick={gameStore.toggleSpinMode} style={styles.gameUiElement}>
+                    {spinMode}
+                </Button>
 
                 <Toggle
                     id="gameplaySpeedToggle"

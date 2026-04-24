@@ -9,6 +9,7 @@ export enum GameFlowName {
     BaseGame,
     None,
 }
+type SpinMode = "Normal" | "Cascade";
 
 type GameStoreProps = {
     currentFlows: GameFlowName;
@@ -30,6 +31,7 @@ type GameStoreProps = {
     isReelButtonActive: boolean;
     isSkipped: boolean;
     popupMessage: string | null;
+    spinMode: SpinMode;
 };
 
 class GameStore {
@@ -59,6 +61,7 @@ class GameStore {
                     isReelButtonActive: false,
                     isSkipped: false,
                     popupMessage: null,
+                    spinMode: "Normal",
                 })),
             ),
         );
@@ -185,6 +188,22 @@ class GameStore {
     public setPopupMessage = (popupMessage: string | null) => {
         this.store.setState((state) => {
             state.popupMessage = popupMessage;
+        });
+    };
+
+    public toggleSpinMode = () => {
+        this.store.setState((state) => {
+            if (state.spinMode === "Cascade") {
+                state.spinMode = "Normal";
+            } else {
+                state.spinMode = "Cascade";
+            }
+        });
+    };
+
+    public setSpinMode = (spinMode: SpinMode) => {
+        this.store.setState((state) => {
+            state.spinMode = spinMode;
         });
     };
 }

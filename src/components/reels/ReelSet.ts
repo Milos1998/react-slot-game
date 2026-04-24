@@ -32,11 +32,22 @@ export class ReelSet extends BaseComponent {
     constructor(layoutId: string) {
         super(layoutId);
 
-        this.setReelSetConfig(cascadeReelsConfig);
+        gameStore.subscribe(
+            (state) => state.spinMode,
+            () => {
+                this.changeSpinMode();
+            },
+        );
+        this.initReelSet();
     }
 
-    public setReelSetConfig(reelSetConfig: ReelSetConfig) {
-        this.config = reelSetConfig;
+    //TODO split init logic and change spin mode logic a bit better
+    private initReelSet() {
+        if (gameStore.props.spinMode === "Normal") {
+            this.config = baseReelsConfig;
+        } else {
+            this.config = cascadeReelsConfig;
+        }
         this.config.reels.forEach((reelConfig, idx) => {
             const reel = new Reel(`reel${idx}`, reelConfig.reelDefinition);
             reel.initReelSymbols();
@@ -48,6 +59,24 @@ export class ReelSet extends BaseComponent {
                 reel.spinSystem = new CascadeSpin(reel, reelConfig.spinDefinition);
             }
             this.reels.push(reel);
+        });
+    }
+
+    private changeSpinMode() {
+        if (gameStore.props.spinMode === "Normal") {
+            this.config = baseReelsConfig;
+        } else {
+            this.config = cascadeReelsConfig;
+        }
+        this.reels.forEach((reel, idx) => {
+            const reelConfig = this.config.reels[idx];
+            if (reelConfig.spinDefinition.spinSystemType === "TopToBottom") {
+                reel.spinSystem = new TopToBottomSpin(reel, reelConfig.spinDefinition);
+            } else if (reelConfig.spinDefinition.spinSystemType === "BottomUp") {
+                reel.spinSystem = new BottomUpSpin(reel, reelConfig.spinDefinition);
+            } else if (reelConfig.spinDefinition.spinSystemType === "Cascade") {
+                reel.spinSystem = new CascadeSpin(reel, reelConfig.spinDefinition);
+            }
         });
     }
 
@@ -73,11 +102,29 @@ export class ReelSet extends BaseComponent {
     }
 
     public async stopReelSpin() {
+        //TODO add ReelSetSpinSystem to sync this type of stuff (do we stop them all at once or sequentially etc)
+        if (this.config.spinStopReelOrder.length > 0) {
+            await this.stopNormalSpin();
+        } else {
+            await this.stopCascadeSpin();
+        }
+    }
+
+    public async stopNormalSpin() {
         const { spinResult, anticipationReels } = gameStore.props;
         for (let i = 0; i < this.config.spinStopReelOrder.length; i++) {
             const reelIdx = this.config.spinStopReelOrder[i];
             await this.reels[reelIdx].spinSystem.startWindDown(spinResult[reelIdx], anticipationReels[reelIdx]);
         }
+    }
+
+    public async stopCascadeSpin() {
+        const { spinResult, anticipationReels } = gameStore.props;
+        await Promise.all(
+            this.reels.map((reel, idx) => {
+                return reel.spinSystem.startWindDown(spinResult[idx], anticipationReels[idx]);
+            }),
+        );
     }
 
     public setRandomSpinResult() {

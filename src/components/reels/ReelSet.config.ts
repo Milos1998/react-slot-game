@@ -80,8 +80,8 @@ export const baseReelsConfig: ReelSetConfig = {
 };
 
 export const cascadeReelsConfig: ReelSetConfig = {
-    minSpinDurationMs: 2500,
-    spinStopReelOrder: [0, 1, 2],
+    minSpinDurationMs: 0,
+    spinStopReelOrder: [],
     reels: [
         {
             reelDefinition: {

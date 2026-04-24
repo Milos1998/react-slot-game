@@ -28,6 +28,7 @@ export class CascadeSpin implements ReelSpin {
     constructor(reel: Reel, spinProps: CascadeSpinProps) {
         this.reel = reel;
         this.props = spinProps;
+        this.reel.reelCells.sort((a, b) => a.y - b.y);
     }
 
     public setCellsToRemove(cellIdxs: number[]) {
