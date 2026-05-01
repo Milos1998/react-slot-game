@@ -32,7 +32,7 @@ It will generate `docs` (instead of `dist` to utilize gh pages for hosting) fold
 
 ## Miscellaneous
 
-Total time spent on the project: < 18h. Started out by forking the (pixi only repo)[https://github.com/Milos1998/wild-west-3-slot].
+Total time spent on the project: < 18h. Started out by forking the [pixi only repo](https://github.com/Milos1998/wild-west-3-slot).
 Goal was to prioritize architecture, animation flow, and core gameplay systems over polish.
 
 ## Architecture notes
