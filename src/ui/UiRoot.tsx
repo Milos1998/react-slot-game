@@ -46,7 +46,7 @@ export function UiRoot() {
             <div className="systemUi" style={styles.systemUi}>
                 <Meter id="fpsMeter" value={fps} label={messages.fps_meter_label} style={styles.fpsMeter} />
 
-                <Button id="spinModeToggle" isEnabled={isGameUiEnabled} onClick={gameStore.toggleSpinMode} style={styles.gameUiElement}>
+                <Button id="spinModeToggle" isEnabled={isGameUiEnabled} onClick={gameStore.toggleSpinMode} style={styles.spinModeToggle}>
                     {spinMode}
                 </Button>
 
@@ -172,6 +172,16 @@ const styles = {
         alignItems: "center",
         justifyContent: "space-between",
     },
+    spinModeToggle: {
+        color: uiStylingConstants.fontColor,
+        fontSize: "30px",
+        borderRadius: "10px",
+        borderColor: uiStylingConstants.borderColor,
+        borderStyle: "solid",
+        borderWidth: "6px",
+        minWidth: "240px",
+        minHeight: "70px",
+    },
     gameplaySpeedToggle: {
         minWidth: "240px",
     },
@@ -201,7 +211,7 @@ const styles = {
         left: "50%",
         transform: "translate(-50%, -50%)",
         backgroundColor: uiStylingConstants.inactiveColor,
-        minWidth: "700px",
+        minWidth: "650px",
         paddingBottom: "10px",
         borderRadius: "10px",
         borderColor: uiStylingConstants.borderColor,

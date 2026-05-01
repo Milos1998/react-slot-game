@@ -45,7 +45,7 @@ class StateMachine {
             return this.currentFlows.responseFlow;
         }
         if (this.currentState === GameFlow.ResponseFlow) {
-            if (gameStore.props.nextFlows !== gameStore.props.currentFlows && gameStore.props.nextFlows !== GameFlowName.None) {
+            if (gameStore.props.nextFlows !== GameFlowName.None) {
                 this.currentState = GameFlow.OutroFlow;
                 return this.currentFlows.outroFlow;
             }

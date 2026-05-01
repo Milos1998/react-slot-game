@@ -198,7 +198,7 @@ export const layoutConfigurations: { orientation: Orientation; layoutConfigNodes
                 name: "reelSet",
                 position: {
                     x: 920,
-                    y: 700,
+                    y: 650,
                 },
             },
             {
@@ -221,7 +221,7 @@ export const layoutConfigurations: { orientation: Orientation; layoutConfigNodes
                 name: "reelSet",
                 position: {
                     x: 700,
-                    y: 890,
+                    y: 860,
                 },
             },
             {
